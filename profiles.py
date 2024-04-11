@@ -1,12 +1,20 @@
 import numpy as np
 
-class DriverProfile():
+class DriverProfile:
     def __init__(self, securityDistanceToObjectAhead, reactionTime, driverAggressivity, speedLimitComplianceFactor):
         self.__securityDistanceToObjectAhead = securityDistanceToObjectAhead
         self.__reactionTime = reactionTime
         self.__driverAggressivity = driverAggressivity
         self.__speedLimitComplianceFactor = speedLimitComplianceFactor
-    
+
+    """def __dict__(self):
+        obj_dict = dict()
+        obj_dict["securityDistanceToObjectAhead"] = self.securityDistanceToObjectAhead
+        obj_dict["reactionTime"] = self.reactionTime
+        obj_dict["driverAggressivity"] = self.driverAggressivity
+        obj_dict["speedLimitComplianceFactor"] = self.speedLimitComplianceFactor
+        return obj_dict"""
+
     @property
     def securityDistanceToObjectAhead(self):
         return self.__securityDistanceToObjectAhead

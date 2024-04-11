@@ -1,10 +1,14 @@
+import argparse
 import pickle
+from datetime import datetime
 import random
 import traci
 from xml.dom import minidom 
 
 from vehicles import *
 
+VEHICLE_POPULATION_FILE_PATH = "data/vehicles_population" + str(datetime.now().timestamp()) + ".dat"
+ROUTE_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
 VPH = 500
 VEHICLE_DISTRIBUTION = {'SmallPetrolCar': 0.210, 'SmallDieselCar': 0.373, 'BigPetrolCar': 0.034, 'BigDieselCar': 0.231, 'MediumVan': 0.139, 'BigVan': 0.009, 'Bus': 0.003}
 
@@ -30,39 +34,11 @@ def generateRandomVehicles():
     
     return vehicleList
 
-# generazione dei percorsi
-def generateRoutes(rootXML, routes):    
-    route = rootXML.createElement('route')
-    route.setAttribute('id', 'route1')
-    route.setAttribute('edges', 'E0 E1')
-    routes.appendChild(route)
-
-    route = rootXML.createElement('route')
-    route.setAttribute('id', 'route2')
-    route.setAttribute('edges', 'E0 E2')
-    routes.appendChild(route)
-
-    route = rootXML.createElement('route')
-    route.setAttribute('id', 'route3')
-    route.setAttribute('edges', '-E2 -E0')
-    routes.appendChild(route)
-
-    route = rootXML.createElement('route')
-    route.setAttribute('id', 'route4')
-    route.setAttribute('edges', '-E1 -E0')
-    routes.appendChild(route)
-
-    route = rootXML.createElement('route')
-    route.setAttribute('id', 'route5')
-    route.setAttribute('edges', '-E1 E2')
-    routes.appendChild(route)
-
 #generazione dei tipi dei veicoli e scrittura sul file XML
 def generateVehicleTypes(vehicleList):
     rootXML = minidom.Document()
     routes = rootXML.createElement('routes')
     rootXML.appendChild(routes)
-    generateRoutes(rootXML, routes)
 
     #creazione vTypes
     for v in vehicleList:
@@ -79,18 +55,23 @@ def generateVehicleTypes(vehicleList):
         routes.appendChild(vtype)
 
     #aggiunta dell'XML generato
-    with open("port_exp.rou.xml", 'w') as fd:
+    with open(ROUTE_FILE_PATH, 'w') as fd:
         fd.write(rootXML.toprettyxml(indent="    "))
 
 #aggiunta veicoli alla simulazione
 def addVehiclesToSimulation(vehicleList):
     for v in vehicleList:
-        if v.startLane == 1 or v.startLane == 3 or v.startLane == 6:
-            departLane = 0
-        if v.startLane == 2 or v.startLane == 4 or v.startLane == 5:
-            departLane = 1
+        departLane = randint(0,1)
         traci.vehicle.add(vehID=v.vehicleID, routeID=v.routeID, typeID='vtype-'+v.vehicleID, depart=v.depart, departSpeed=v.initialCarSpeed, departLane=departLane)
 
 if __name__ == "__main__":
-    vehicleList = generateRandomVehicles()
-    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--dest-file', default=VEHICLE_POPULATION_FILE_PATH, dest="filename", required=False)
+    arguments = parser.parse_args()
+
+    # generazione della popolazione
+    vList = generateRandomVehicles()
+
+    # scrittura su file
+    with open(arguments.filename, 'wb') as fd:
+        pickle.dump(vList, fd)

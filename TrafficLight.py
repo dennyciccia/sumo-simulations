@@ -3,7 +3,7 @@ import traci
 J = 100
 K = 1
 
-class TrafficLight():
+class TrafficLight:
     def __init__(self, tlID):
         self.__tlID = tlID
         self.__elapsedTimePhase = 0     # da quanto tempo è attiva la fase corrente (s)
@@ -56,7 +56,7 @@ class TrafficLight():
         vehicleNumberMinusE1 = traci.edge.getLastStepVehicleNumber("-E1")
         # se i veicoli sono fermi o non ci sono vai alla fase verde
         if (self.movingFlow == 'A' and (meanSpeedE0 < 1.0 or vehicleNumberE0 == 0) and (meanSpeedMinusE2 < 1.0 or vehicleNumberMinusE2 == 0)) or (self.movingFlow == 'B' and (meanSpeedMinusE1 < 1.0 or vehicleNumberMinusE1 == 0)):
-            traci.trafficlight.setPhase(self.tlID, 3 if self.movingFlow == 'A' else 0)
+            traci.trafficlight.setPhase(traci.trafficlight.getPhase(self.tlID)+1)
     
     # azioni eseguite ad ogni step della simulazione
     def performStep(self):

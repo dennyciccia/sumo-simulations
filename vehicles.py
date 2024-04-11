@@ -1,3 +1,4 @@
+import pickle
 from abc import ABC
 from random import randint
 import numpy as np
@@ -13,7 +14,7 @@ class VehicleList(list):
 
 
 class VehicleClass(ABC):
-    def __init__(self, id, r, l, w, ics, hst, a, nga, ba, fba, A, B, C, dp, d, sl):
+    def __init__(self, id, r, l, w, ics, hst, a, nga, ba, fba, A, B, C, dp, d=-1, sl=-1):
         self.__vehicleID = id
         self.__routeID = r
         self.__carLength = l
@@ -30,7 +31,25 @@ class VehicleClass(ABC):
         self.__driverProfile = dp
         self.__depart = d
         self.__startLane = sl
-    
+
+    """def __dict__(self):
+        obj_dict = dict()
+
+        obj_dict["vehicleID"] = self.vehicleID
+        obj_dict["routeID"] = self.routeID
+        obj_dict["carLength"] = self.carLength
+        obj_dict["carWeight"] = self.carWeight
+        obj_dict["initialCarSpeed"] = self.initialCarSpeed
+        obj_dict["hasStartStop"] = self.hasStartStop
+        obj_dict["carAcceleration"] = self.carAcceleration
+        obj_dict["noGasAcceleration"] = self.noGasAcceleration
+        obj_dict["brakingAcceleration"] = self.brakingAcceleration
+        obj_dict["fullBrakingAcceleration"] = self.fullBrakingAcceleration
+        obj_dict["depart"] = self.depart
+        obj_dict["driverProfile"] = self.driverProfile.__dict__()
+
+        return obj_dict"""
+
     @property
     def vehicleID(self):
         return self.__vehicleID
@@ -107,21 +126,12 @@ class VehicleClass(ABC):
         return ( ( self.A*(vsp**2) + self.B*vsp + self.C ) * self.carWeight ) / 1000
 
     @classmethod
-    def generateRandom(cls, vehicleID, startLane, depart=-1):
+    def generateRandom(cls, vehicleID):
         # profilo dell'autista
         driverProfile = DriverProfile.generateRandom()
 
         # percorso
-        if startLane == 1:
-            routeID = "route" + str(randint(1,2))
-        if startLane == 2:
-            routeID = "route2"
-        if startLane == 3 or startLane == 4:
-            routeID = "route3"
-        if startLane == 5:
-            routeID = "route4"
-        if startLane == 6:
-            routeID = "route5"
+        routeID = "route" + str(randint(1,12))
 
         # lunghezza
         carLength = np.random.normal(loc=4.6*cls.lengthMult, size=1)[0]
@@ -145,7 +155,7 @@ class VehicleClass(ABC):
         brakingAcceleration = abs(np.random.normal(loc=3.0, size=1)[0])
         fullBrakingAcceleration = np.random.normal(loc=6, size=1)[0]
 
-        return cls(vehicleID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAcceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, depart, startLane)
+        return cls(vehicleID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAcceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile)
 
 
 class SmallPetrolCar(VehicleClass):
@@ -265,3 +275,12 @@ class Bus(VehicleClass):
 
     def getCO2emission(self, velocity, acceleration, slope): 
         return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * Bus.ConversionFactor
+
+
+if __name__ == "__main__":
+    """with open("temp.json","w") as fd:
+        json.dump([v.__dict__() for v in vlist], fd)
+
+    with open("temp", "r") as fd:
+        vlist2 = json.load(fd)
+        vlist2 = [Person(**person_data) for person_data in list_from_file]"""

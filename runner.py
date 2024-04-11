@@ -1,15 +1,15 @@
+import argparse
 import os
 import sys
 from TrafficLight import TrafficLight
 import traci
-import traci.constants as tc
 
 from vehicle_generator import *
 from vehicles import *
 
 
 def startProgram():
-    traci.start(["sumo-gui", "-c", "port_exp.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
+    traci.start(["sumo-gui", "-c", "sumo_xml_files/config.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
 
 
 if 'SUMO_HOME' in os.environ:
@@ -20,8 +20,14 @@ else:
 
 
 if __name__ == '__main__':
+    # parsing argomenti
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-l', '--load-file', dest="filename", required=True)
+    arguments = parser.parse_args()
+
     # inizializzazione e avvio SUMO
-    vehicleList = generateRandomVehicles()
+    with open(arguments.filename, 'rb') as fd:
+        vehicleList = pickle.load(fd)
     generateVehicleTypes(vehicleList)
     startProgram()
     addVehiclesToSimulation(vehicleList)
@@ -55,8 +61,8 @@ if __name__ == '__main__':
             v = traci.vehicle.getSpeed(vehicleID)
             a = traci.vehicle.getAcceleration(vehicleID)
             s = traci.vehicle.getSlope(vehicleID) # sempre 0.0
-            emission = vehicleList.getVehicle(vehicleID).getCO2emission(v, a, s)/36000 # Kg/100ms
-            #emission = (traci.vehicle.getCO2Emission(vehicleID) * traci.simulation.getDeltaT()) / 1000000 # Kg/100ms
+            #emission = vehicleList.getVehicle(vehicleID).getCO2emission(v, a, s)/36000 # Kg/100ms
+            emission = (traci.vehicle.getCO2Emission(vehicleID) * traci.simulation.getDeltaT()) / 1000000 # Kg/100ms
             totalEmissions += emission if emission >= 0 else 0
         
             # distanza totale percorsa e tempo totale di attesa

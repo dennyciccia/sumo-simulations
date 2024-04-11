@@ -3,13 +3,13 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="port_exp2.net.xml"/>
-        <route-files value="port_exp.rou.xml"/>
-        <additional-files value="port_exp2.add.xml"/>
+        <net-file value="4way_crossing.net.xml"/>
+        <route-files value="routes.rou.xml,vehicletypes.rou.xml"/>
+        <additional-files value="4way_crossing.add.xml"/>
     </input>
 
     <gui-only>
-        <gui-settings-file value="port_exp.view.xml"/>
+        <gui-settings-file value="realworld.view.xml"/>
     </gui-only>
 
 </configuration>
