@@ -19,6 +19,11 @@ else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
 
+# constanti
+INDUCTION_LOOP_START = ["ILE1dx","ILE1sx","ILE2dx","ILE2sx","ILE3dx","ILE3sx","ILE4dx","ILE4sx"]
+INDUCTION_LOOP_END = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx","IL-E4dx","IL-E4sx"]
+
+
 if __name__ == '__main__':
     # parsing argomenti
     parser = argparse.ArgumentParser()
@@ -47,7 +52,7 @@ if __name__ == '__main__':
         step += 1
 
         # veicoli entrati nella simulazione
-        for indLoopID in ["ILE0dx","ILE0sx","IL-E2dx","IL-E2sx","IL-E1dx","IL-E1sx"]:
+        for indLoopID in INDUCTION_LOOP_START:
             vehicles = traci.inductionloop.getLastStepVehicleIDs(indLoopID)
             for elem in vehicles:
                 if elem not in enteredVehicles:
@@ -66,7 +71,7 @@ if __name__ == '__main__':
             totalEmissions += emission if emission >= 0 else 0
         
             # distanza totale percorsa e tempo totale di attesa
-            for indLoopID in ["IL-E0dx","IL-E0sx","ILE2dx","ILE2sx","ILE1dx","ILE1sx"]:
+            for indLoopID in INDUCTION_LOOP_END:
                 if vehicleID in traci.inductionloop.getLastStepVehicleIDs(indLoopID):
                     totalDistance += traci.vehicle.getDistance(vehicleID)
                     totalWaitingTime += traci.vehicle.getAccumulatedWaitingTime(vehicleID)
@@ -83,7 +88,7 @@ if __name__ == '__main__':
     
     # risultati misure
     print(f"Distanza totale percorsa: {totalDistance / 1000} Km")
-    print(f"Velocità media: {(meanSpeed) * 3.6} Km/h")
+    print(f"Velocità media: {meanSpeed * 3.6} Km/h")
     print(f"Tempo totale di attesa: {totalWaitingTime} s")
     print(f"Emissioni totali di CO2: {totalEmissions} Kg")
     print(f"Emissione media di CO2: {(totalEmissions * 1000) / (totalDistance / 1000)} g/Km")

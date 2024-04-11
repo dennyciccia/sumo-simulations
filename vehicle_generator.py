@@ -7,7 +7,7 @@ from xml.dom import minidom
 
 from vehicles import *
 
-VEHICLE_POPULATION_FILE_PATH = "data/vehicles_population" + str(datetime.now().timestamp()) + ".dat"
+VEHICLE_POPULATION_FILE_PATH = "data/vehicle_population" + str(datetime.now().timestamp()) + ".dat"
 ROUTE_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
 VPH = 500
 VEHICLE_DISTRIBUTION = {'SmallPetrolCar': 0.210, 'SmallDieselCar': 0.373, 'BigPetrolCar': 0.034, 'BigDieselCar': 0.231, 'MediumVan': 0.139, 'BigVan': 0.009, 'Bus': 0.003}
@@ -75,3 +75,5 @@ if __name__ == "__main__":
     # scrittura su file
     with open(arguments.filename, 'wb') as fd:
         pickle.dump(vList, fd)
+
+    # TODO:serializzazione human readable

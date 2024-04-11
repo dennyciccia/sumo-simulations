@@ -14,7 +14,7 @@ class VehicleList(list):
 
 
 class VehicleClass(ABC):
-    def __init__(self, id, r, l, w, ics, hst, a, nga, ba, fba, A, B, C, dp, d=-1, sl=-1):
+    def __init__(self, id, r, l, w, ics, hst, a, nga, ba, fba, dp, d=-1):
         self.__vehicleID = id
         self.__routeID = r
         self.__carLength = l
@@ -25,12 +25,8 @@ class VehicleClass(ABC):
         self.__noGasAcceleration = nga
         self.__brakingAcceleration = ba
         self.__fullBrakingAcceleration = fba
-        self.__A = A
-        self.__B = B
-        self.__C = C
         self.__driverProfile = dp
         self.__depart = d
-        self.__startLane = sl
 
     """def __dict__(self):
         obj_dict = dict()
@@ -91,18 +87,6 @@ class VehicleClass(ABC):
         return self.__fullBrakingAcceleration
     
     @property
-    def A(self):
-        return self.__A
-    
-    @property
-    def B(self):
-        return self.__B
-    
-    @property
-    def C(self):
-        return self.__C
-    
-    @property
     def driverProfile(self):
         return self.__driverProfile
     
@@ -114,16 +98,15 @@ class VehicleClass(ABC):
     def depart(self, value):
         self.__depart = value
 
-    @property
-    def startLane(self):
-        return self.__startLane
-
     @staticmethod
     def VSP(velocity, acceleration, slope): # W/Kg
         return velocity*(1.1*acceleration + 9.81*slope + 0.132) + 0.000302*(velocity**3)
 
     def FC(self, vsp): # g/h
         return ( ( self.A*(vsp**2) + self.B*vsp + self.C ) * self.carWeight ) / 1000
+
+    def getCO2emission(self, velocity, acceleration, slope): # Kg/h
+        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * self.ConversionFactor
 
     @classmethod
     def generateRandom(cls, vehicleID):
@@ -168,12 +151,6 @@ class SmallPetrolCar(VehicleClass):
     color = "#FFFF00"
     shape = "passenger/sedan"
 
-    def __init__(self, vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, depart, startLane):
-        super().__init__(vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, SmallPetrolCar.A, SmallPetrolCar.B, SmallPetrolCar.C, driverProfile, depart, startLane)
-
-    def getCO2emission(self, velocity, acceleration, slope): # Kg/h
-        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * SmallPetrolCar.ConversionFactor
-
 
 class SmallDieselCar(VehicleClass):
     A = 1.0601
@@ -185,12 +162,6 @@ class SmallDieselCar(VehicleClass):
     color = "#00BFFF"
     shape = "passenger/sedan"
 
-    def __init__(self, vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, depart, startLane):
-        super().__init__(vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, SmallDieselCar.A, SmallDieselCar.B, SmallDieselCar.C, driverProfile, depart, startLane)
-
-    def getCO2emission(self, velocity, acceleration, slope): 
-        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * SmallDieselCar.ConversionFactor
-    
 
 class BigPetrolCar(VehicleClass):
     A = 0.2471
@@ -201,12 +172,6 @@ class BigPetrolCar(VehicleClass):
     weightMult = 1.3
     color = "#FF4500"
     shape = "passenger/hatchback"
-
-    def __init__(self, vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, depart, startLane):
-        super().__init__(vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, BigPetrolCar.A, BigPetrolCar.B, BigPetrolCar.C, driverProfile, depart, startLane)
-
-    def getCO2emission(self, velocity, acceleration, slope): # Kg/h
-        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * BigPetrolCar.ConversionFactor
 
     
 class BigDieselCar(VehicleClass):
@@ -219,12 +184,6 @@ class BigDieselCar(VehicleClass):
     color = "#8A2BE2"
     shape = "passenger/hatchback"
 
-    def __init__(self, vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, depart, startLane):
-        super().__init__(vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, BigDieselCar.A, BigDieselCar.B, BigDieselCar.C, driverProfile, depart, startLane)
-
-    def getCO2emission(self, velocity, acceleration, slope): 
-        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * BigDieselCar.ConversionFactor
-    
 
 class MediumVan(VehicleClass):
     A = 1.3313
@@ -235,12 +194,6 @@ class MediumVan(VehicleClass):
     weightMult = 1.3
     color = "#DC143C"
     shape = "delivery"
-
-    def __init__(self, vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, depart, startLane):
-        super().__init__(vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, MediumVan.A, MediumVan.B, MediumVan.C, driverProfile, depart, startLane)
-
-    def getCO2emission(self, velocity, acceleration, slope): 
-        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * MediumVan.ConversionFactor
     
 
 class BigVan(VehicleClass):
@@ -252,12 +205,6 @@ class BigVan(VehicleClass):
     weightMult = 1.60
     color = "#FFFFFF"
     shape = "delivery"
-
-    def __init__(self, vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, depart, startLane):
-        super().__init__(vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, MediumVan.A, MediumVan.B, MediumVan.C, driverProfile, depart, startLane)
-
-    def getCO2emission(self, velocity, acceleration, slope): 
-        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * BigVan.ConversionFactor
     
 
 class Bus(VehicleClass):
@@ -269,12 +216,6 @@ class Bus(VehicleClass):
     weightMult = 11
     color = "#7CFC00"
     shape = "bus"
-
-    def __init__(self, vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, depart, startLane):
-        super().__init__(vehID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAccceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, MediumVan.A, MediumVan.B, MediumVan.C, driverProfile, depart, startLane)
-
-    def getCO2emission(self, velocity, acceleration, slope): 
-        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * Bus.ConversionFactor
 
 
 if __name__ == "__main__":
