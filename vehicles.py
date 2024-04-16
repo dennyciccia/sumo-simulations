@@ -1,4 +1,3 @@
-import pickle
 from abc import ABC
 from random import randint
 import numpy as np
@@ -11,6 +10,13 @@ class VehicleList(list):
         for v in self:
             if v.vehicleID == vehicleID:
                 return v
+
+    """def __dict__(self):
+        obj_dict = dict()
+
+        obj_dict["vehicleList"] = self
+
+        return obj_dict"""
 
 
 class VehicleClass(ABC):
@@ -42,7 +48,16 @@ class VehicleClass(ABC):
         obj_dict["brakingAcceleration"] = self.brakingAcceleration
         obj_dict["fullBrakingAcceleration"] = self.fullBrakingAcceleration
         obj_dict["depart"] = self.depart
-        obj_dict["driverProfile"] = self.driverProfile.__dict__()
+        obj_dict["driverProfile"] = self.driverProfile.__dict__
+
+        obj_dict["A"] = self.A
+        obj_dict["B"] = self.B
+        obj_dict["C"] = self.C
+        obj_dict["ConversionFactor"] = self.ConversionFactor
+        obj_dict["lengthMult"] = self.lengthMult
+        obj_dict["weightMult"] = self.weightMult
+        obj_dict["color"] = self.color
+        obj_dict["shape"] = self.shape
 
         return obj_dict"""
 
@@ -117,10 +132,10 @@ class VehicleClass(ABC):
         routeID = "route" + str(randint(1,12))
 
         # lunghezza
-        carLength = np.random.normal(loc=4.6*cls.lengthMult, size=1)[0]
+        carLength = float(np.random.normal(loc=4.6*cls.lengthMult, size=1)[0])
 
         # peso
-        carWeight = np.random.normal(loc=1600*cls.weightMult, scale=200, size=1)[0]
+        carWeight = float(np.random.normal(loc=1600*cls.weightMult, scale=200, size=1)[0])
 
         # velocità iniziale
         initialCarSpeed = (50.00 / 3.6) * driverProfile.speedLimitComplianceFactor
@@ -129,14 +144,14 @@ class VehicleClass(ABC):
         hasStartStop = True if randint(0,1) == 1 else False
 
         # accelerazione
-        carAcceleration = np.random.normal(loc=3, scale=2, size=1)[0]
+        carAcceleration = float(np.random.normal(loc=3, scale=2, size=1)[0])
         carAcceleration = 2.1 if carAcceleration < 2.1 else carAcceleration
 
         # decelerazione
-        noGasAcceleration = np.random.normal(loc=0.5, size=1)[0]
+        noGasAcceleration = float(np.random.normal(loc=0.5, size=1)[0])
         noGasAcceleration = 0.5 if noGasAcceleration < 0.5 else noGasAcceleration
-        brakingAcceleration = abs(np.random.normal(loc=3.0, size=1)[0])
-        fullBrakingAcceleration = np.random.normal(loc=6, size=1)[0]
+        brakingAcceleration = float(abs(np.random.normal(loc=3.0, size=1)[0]))
+        fullBrakingAcceleration = float(np.random.normal(loc=6, size=1)[0])
 
         return cls(vehicleID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAcceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile)
 
@@ -216,12 +231,3 @@ class Bus(VehicleClass):
     weightMult = 11
     color = "#7CFC00"
     shape = "bus"
-
-
-if __name__ == "__main__":
-    """with open("temp.json","w") as fd:
-        json.dump([v.__dict__() for v in vlist], fd)
-
-    with open("temp", "r") as fd:
-        vlist2 = json.load(fd)
-        vlist2 = [Person(**person_data) for person_data in list_from_file]"""

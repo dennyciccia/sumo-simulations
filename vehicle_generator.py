@@ -72,8 +72,6 @@ if __name__ == "__main__":
     # generazione della popolazione
     vList = generateRandomVehicles()
 
-    # scrittura su file
-    with open(arguments.filename, 'wb') as fd:
-        pickle.dump(vList, fd)
-
-    # TODO:serializzazione human readable
+    # serializzazione
+    with open("data/vehicle_population.yaml", 'w') as fd:
+        yaml.dump(vList, fd)
