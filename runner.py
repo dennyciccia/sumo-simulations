@@ -8,6 +8,9 @@ from vehicle_generator import *
 from vehicles import *
 
 
+SMART_TRAFFIC_LIGHT_ON = True
+
+
 def startProgram():
     traci.start(["sumo-gui", "-c", "sumo_xml_files/config.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
 
@@ -27,17 +30,21 @@ INDUCTION_LOOP_END = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx
 if __name__ == '__main__':
     # parsing argomenti
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', '--load-file', dest="filename", required=True)
+    parser.add_argument('-f', '--load-file', dest="filename", required=True)
     arguments = parser.parse_args()
 
     # inizializzazione e avvio SUMO
-    with open(arguments.filename, 'rb') as fd:
-        vehicleList = pickle.load(fd)
+    with open(arguments.filename, 'r') as fd:
+        vehicleList = yaml.unsafe_load(fd)
     generateVehicleTypes(vehicleList)
     startProgram()
     addVehiclesToSimulation(vehicleList)
 
     smartTrafficLight = TrafficLight(tlID=traci.trafficlight.getIDList()[0])
+    if SMART_TRAFFIC_LIGHT_ON:
+        traci.trafficlight.setProgram(smartTrafficLight.tlID, "1")
+    else:
+        traci.trafficlight.setProgram(smartTrafficLight.tlID, "0")
 
     totalEmissions = 0 # Kg
     totalDistance = 0 # m
@@ -58,7 +65,8 @@ if __name__ == '__main__':
                 if elem not in enteredVehicles:
                     enteredVehicles.append(elem)
 
-        smartTrafficLight.performStep()
+        if SMART_TRAFFIC_LIGHT_ON:
+            smartTrafficLight.performStep()
 
         # misure
         for vehicleID in enteredVehicles[:]:
@@ -83,7 +91,7 @@ if __name__ == '__main__':
         for edgeID in traci.edge.getIDList():
             meanSpeedAtStep += traci.edge.getLastStepMeanSpeed(edgeID)
         meanSpeedAtStep /= traci.edge.getIDCount()
-        # velocità media fino ad ora
+        # velocità media fino a ora
         meanSpeed = (meanSpeed * (step-1) + meanSpeedAtStep) / step
     
     # risultati misure

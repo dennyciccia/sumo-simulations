@@ -131,11 +131,11 @@
         <phase duration="3"  state="rrrrrrrrrrrrrrrr" next="0"/>
     </tlLogic>
     <tlLogic id="J0" type="static" programID="1" offset="0">
-        <phase duration="1000000" state="GGGgrrrrGGGgrrrr" next="1"/>
-        <phase duration="3"  state="yyyyrrrryyyyrrrr" next="2"/>
+        <phase duration="1000000" state="rrrrGGGgrrrrGGGg" next="1"/>
+        <phase duration="3"  state="rrrryyyyrrrryyyy" next="2"/>
         <phase duration="3"  state="rrrrrrrrrrrrrrrr" next="3"/>
-        <phase duration="1000000" state="rrrrGGGgrrrrGGGg" next="4"/>
-        <phase duration="3"  state="rrrryyyyrrrryyyy" next="5"/>
+        <phase duration="1000000" state="GGGgrrrrGGGgrrrr" next="4"/>
+        <phase duration="3"  state="yyyyrrrryyyyrrrr" next="5"/>
         <phase duration="3"  state="rrrrrrrrrrrrrrrr" next="0"/>
     </tlLogic>
 

@@ -1,5 +1,5 @@
 import argparse
-import pickle
+import yaml
 from datetime import datetime
 import random
 import traci
@@ -9,7 +9,9 @@ from vehicles import *
 
 VEHICLE_POPULATION_FILE_PATH = "data/vehicle_population" + str(datetime.now().timestamp()) + ".dat"
 ROUTE_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
-VPH = 500
+VPH = 915
+TOTAL_TIME = 3600 # secondi
+N_VEHICLES = (VPH * TOTAL_TIME) / 3600
 VEHICLE_DISTRIBUTION = {'SmallPetrolCar': 0.210, 'SmallDieselCar': 0.373, 'BigPetrolCar': 0.034, 'BigDieselCar': 0.231, 'MediumVan': 0.139, 'BigVan': 0.009, 'Bus': 0.003}
 
 # generazione degli oggetti dei veicoli
@@ -19,7 +21,7 @@ def generateRandomVehicles():
 
     # generazione di tutti i tipi di veicoli
     for vtype, perc in VEHICLE_DISTRIBUTION.items():
-        for _ in range(round(VPH*perc)):
+        for _ in range(round(N_VEHICLES*perc)):
             vehicleList.append(eval(vtype).generateRandom("vehicle"+str(vehicleCounter)))
             vehicleCounter += 1
 
@@ -27,10 +29,8 @@ def generateRandomVehicles():
     random.shuffle(vehicleList)
 
     # calcolo istanti di partenze ----- TODO:da sistemare
-    departCounter = 0
     for v in vehicleList:
-        v.depart = departCounter
-        departCounter += round(3600 / VPH, 3)
+        v.depart = randint(0, TOTAL_TIME)
     
     return vehicleList
 
