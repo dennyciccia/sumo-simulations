@@ -12,7 +12,7 @@ SMART_TRAFFIC_LIGHT_ON = True
 
 
 def startProgram():
-    traci.start(["sumo-gui", "-c", "sumo_xml_files/config.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
+    traci.start(["sumo-gui", "-c", "sumo_xml_files/4way_crossing.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
 
 
 if 'SUMO_HOME' in os.environ:
@@ -40,11 +40,13 @@ if __name__ == '__main__':
     startProgram()
     addVehiclesToSimulation(vehicleList)
 
-    smartTrafficLight = TrafficLight(tlID=traci.trafficlight.getIDList()[0])
-    if SMART_TRAFFIC_LIGHT_ON:
-        traci.trafficlight.setProgram(smartTrafficLight.tlID, "1")
-    else:
-        traci.trafficlight.setProgram(smartTrafficLight.tlID, "0")
+    smartTrafficLight = list()
+    for tl in traci.trafficlight.getIDList():
+        smartTrafficLight.append(TrafficLight(tlID=tl))
+        if SMART_TRAFFIC_LIGHT_ON:
+            traci.trafficlight.setProgram(tl, "1")
+        else:
+            traci.trafficlight.setProgram(tl, "0")
 
     totalEmissions = 0 # Kg
     totalDistance = 0 # m
@@ -65,8 +67,10 @@ if __name__ == '__main__':
                 if elem not in enteredVehicles:
                     enteredVehicles.append(elem)
 
+        # step semafori
         if SMART_TRAFFIC_LIGHT_ON:
-            smartTrafficLight.performStep()
+            for trafficLight in smartTrafficLight:
+                trafficLight.performStep()
 
         # misure
         for vehicleID in enteredVehicles[:]:

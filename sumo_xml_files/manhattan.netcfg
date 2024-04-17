@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-04-17 10:35:45 by Eclipse SUMO netgenerate Version 1.19.0
+-->
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netgenerateConfiguration.xsd">
+
+    <grid_network>
+        <grid value="true"/>
+        <grid.number value="3"/>
+        <grid.length value="200"/>
+        <grid.attach-length value="200"/>
+    </grid_network>
+
+    <building_defaults>
+        <default.lanenumber value="2"/>
+    </building_defaults>
+
+    <tls_building>
+        <tls.set value="B1"/>
+        <tls.green.time value="42"/>
+        <tls.yellow.time value="3"/>
+        <tls.allred.time value="3"/>
+    </tls_building>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+    </junctions>
+
+    <output>
+        <output-file value="manhattan.net.xml"/>
+    </output>
+
+</configuration>

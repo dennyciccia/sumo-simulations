@@ -7,7 +7,7 @@ from xml.dom import minidom
 
 from vehicles import *
 
-VEHICLE_POPULATION_FILE_PATH = "data/vehicle_population" + str(datetime.now().timestamp()) + ".dat"
+VEHICLE_POPULATION_FILE_PATH = "data/vehicle_population" + str(datetime.now().timestamp()) + ".yaml"
 ROUTE_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
 VPH = 915
 TOTAL_TIME = 3600 # secondi
@@ -28,7 +28,7 @@ def generateRandomVehicles():
     # rimescolamento in modo che i tipi di veicoli partano in ordine sparso
     random.shuffle(vehicleList)
 
-    # calcolo istanti di partenze ----- TODO:da sistemare
+    # calcolo istanti di partenze
     for v in vehicleList:
         v.depart = randint(0, TOTAL_TIME)
     
