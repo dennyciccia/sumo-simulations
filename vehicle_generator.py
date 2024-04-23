@@ -7,8 +7,8 @@ from xml.dom import minidom
 
 from vehicles import *
 
-VEHICLE_POPULATION_FILE_PATH = "data/vehicle_population" + str(datetime.now().timestamp()) + ".yaml"
-ROUTE_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
+VEHICLE_POPULATION_FILE_PATH = "data/vehicle_population.yaml"
+VEHICLETYPES_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
 VPH = 915
 TOTAL_TIME = 3600 # secondi
 N_VEHICLES = (VPH * TOTAL_TIME) / 3600
@@ -55,7 +55,7 @@ def generateVehicleTypes(vehicleList):
         routes.appendChild(vtype)
 
     #aggiunta dell'XML generato
-    with open(ROUTE_FILE_PATH, 'w') as fd:
+    with open(VEHICLETYPES_FILE_PATH, 'w') as fd:
         fd.write(rootXML.toprettyxml(indent="    "))
 
 #aggiunta veicoli alla simulazione
@@ -73,5 +73,5 @@ if __name__ == "__main__":
     vList = generateRandomVehicles()
 
     # serializzazione
-    with open("data/vehicle_population.yaml", 'w') as fd:
+    with open(arguments.filename, 'w') as fd:
         yaml.dump(vList, fd)

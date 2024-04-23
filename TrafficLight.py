@@ -1,5 +1,8 @@
 import traci
 
+FIRST_ENHANCEMENT = True
+SECOND_ENHANCEMENT = True
+
 J = 100
 K = 1
 
@@ -14,9 +17,9 @@ class TrafficLight:
     
     @property
     def movingFlow(self):
-        if traci.trafficlight.getPhase(self.tlID) in [3,4,5]:   # flusso orizzontale
+        if traci.trafficlight.getPhase(self.tlID) in [0,1,2]:   # flusso orizzontale
             return 'A'
-        elif traci.trafficlight.getPhase(self.tlID) in [0,1,2]: # flusso verticale
+        elif traci.trafficlight.getPhase(self.tlID) in [3,4,5]: # flusso verticale
             return 'B'
 
     @property
@@ -43,13 +46,17 @@ class TrafficLight:
         
         for edge in ["E1", "E3"]:
             for vehicle in traci.edge.getLastStepVehicleIDs(edge):
-                #costA += J + K * (traci.vehicle.getSpeed(vehicle)**2)
-                costA += J + (30 if self.movingFlow == 'A' else 1) * (traci.vehicle.getSpeed(vehicle)**2)
+                if not FIRST_ENHANCEMENT:
+                    costA += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
+                else:
+                    costA += J + (30 if self.movingFlow == 'A' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
 
         for edge in ["E2", "E4"]:
             for vehicle in traci.edge.getLastStepVehicleIDs(edge):
-                #costB += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
-                costB += J + (30 if self.movingFlow == 'B' else 1) * (traci.vehicle.getSpeed(vehicle)**2)
+                if not FIRST_ENHANCEMENT:
+                    costB += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
+                else:
+                    costB += J + (30 if self.movingFlow == 'A' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
         
         return costA, costB
     

@@ -11,7 +11,7 @@
     </grid_network>
 
     <output>
-        <output-file value=".\manhattan.net.xml"/>
+        <output-file value=".\manhattan1.net.xml"/>
     </output>
 
     <building_defaults>

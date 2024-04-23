@@ -3,16 +3,17 @@ import os
 import sys
 from TrafficLight import TrafficLight
 import traci
+import yaml
 
 from vehicle_generator import *
 from vehicles import *
 
 
-SMART_TRAFFIC_LIGHT_ON = True
+SMART_TRAFFIC_LIGHT_ON = False
 
 
 def startProgram():
-    traci.start(["sumo-gui", "-c", "sumo_xml_files/4way_crossing.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
+    traci.start(["sumo-gui", "-c", "sumo_xml_files/4way_crossing/4way_crossing.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
 
 
 if 'SUMO_HOME' in os.environ:
@@ -30,11 +31,12 @@ INDUCTION_LOOP_END = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx
 if __name__ == '__main__':
     # parsing argomenti
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--load-file', dest="filename", required=True)
+    parser.add_argument('-p', '--population-file', dest="population_file", required=True)
+    parser.add_argument('-l', '--log-file', dest="log_file", required=True)
     arguments = parser.parse_args()
 
     # inizializzazione e avvio SUMO
-    with open(arguments.filename, 'r') as fd:
+    with open(arguments.population_file, 'r') as fd:
         vehicleList = yaml.unsafe_load(fd)
     generateVehicleTypes(vehicleList)
     startProgram()
@@ -74,7 +76,9 @@ if __name__ == '__main__':
 
         # misure
         for vehicleID in enteredVehicles[:]:
-            # emissioni
+            vehicleList.getVehicle(vehicleID).doMeasures(step)
+
+            # emissioni (misure intermedie)
             v = traci.vehicle.getSpeed(vehicleID)
             a = traci.vehicle.getAcceleration(vehicleID)
             s = traci.vehicle.getSlope(vehicleID) # sempre 0.0
@@ -85,12 +89,16 @@ if __name__ == '__main__':
             # distanza totale percorsa e tempo totale di attesa
             for indLoopID in INDUCTION_LOOP_END:
                 if vehicleID in traci.inductionloop.getLastStepVehicleIDs(indLoopID):
+                    vehicleList.getVehicle(vehicleID).doMeasures(step, final=True)
+
+                    # (misure intermedie)
                     totalDistance += traci.vehicle.getDistance(vehicleID)
                     totalWaitingTime += traci.vehicle.getAccumulatedWaitingTime(vehicleID)
+
                     if vehicleID in enteredVehicles:
                         enteredVehicles.remove(vehicleID)
             
-        # velocità media (degli edge nell'attuale step)
+        # velocità media (degli edge nell'attuale step) (misure intermedie)
         meanSpeedAtStep = 0
         for edgeID in traci.edge.getIDList():
             meanSpeedAtStep += traci.edge.getLastStepMeanSpeed(edgeID)
@@ -98,16 +106,18 @@ if __name__ == '__main__':
         # velocità media fino a ora
         meanSpeed = (meanSpeed * (step-1) + meanSpeedAtStep) / step
     
-    # risultati misure
+    # risultati misure intermedie
     print(f"Distanza totale percorsa: {totalDistance / 1000} Km")
     print(f"Velocità media: {meanSpeed * 3.6} Km/h")
     print(f"Tempo totale di attesa: {totalWaitingTime} s")
     print(f"Emissioni totali di CO2: {totalEmissions} Kg")
     print(f"Emissione media di CO2: {(totalEmissions * 1000) / (totalDistance / 1000)} g/Km")
-    """
-    with open("log.csv", 'a') as fd:
-        print(f"{totalDistance / 1000},{meanSpeed * 3.6},{totalWaitingTime},{totalEmissions},{(totalEmissions * 1000) / (totalDistance / 1000)}", file=fd)
-    """
+
+    # scrittura dati dei veicoli
+    with open(arguments.log_file, 'a') as fd:
+        for v in vehicleList:
+            print(f"{v.vehicleID},{v.totalDistance / 1000},{v.totalTravelTime},{v.totalWaitingTime},{v.meanSpeed * 3.6},{v.totalCO2Emissions},{v.totalCOEmissions},{v.totalHCEmissions},{v.totalPMxEmissions},{v.totalNOxEmissions},{v.totalFuelConsumption},{v.totalNoiseEmission}", file=fd)
+
     traci.close()
     sys.stdout.flush()
     
