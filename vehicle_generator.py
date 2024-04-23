@@ -13,6 +13,8 @@ VPH = 915
 TOTAL_TIME = 3600 # secondi
 N_VEHICLES = (VPH * TOTAL_TIME) / 3600
 VEHICLE_DISTRIBUTION = {'SmallPetrolCar': 0.210, 'SmallDieselCar': 0.373, 'BigPetrolCar': 0.034, 'BigDieselCar': 0.231, 'MediumVan': 0.139, 'BigVan': 0.009, 'Bus': 0.003}
+FIRST_ROUTE = 1
+LAST_ROUTE = 5
 
 # generazione degli oggetti dei veicoli
 def generateRandomVehicles():
@@ -34,13 +36,13 @@ def generateRandomVehicles():
     
     return vehicleList
 
-#generazione dei tipi dei veicoli e scrittura sul file XML
+# generazione dei tipi dei veicoli e scrittura sul file XML
 def generateVehicleTypes(vehicleList):
     rootXML = minidom.Document()
     routes = rootXML.createElement('routes')
     rootXML.appendChild(routes)
 
-    #creazione vTypes
+    # creazione vTypes
     for v in vehicleList:
         vtype = rootXML.createElement('vType')
         vtype.setAttribute('id', 'vtype-'+v.vehicleID)
@@ -50,19 +52,25 @@ def generateVehicleTypes(vehicleList):
         vtype.setAttribute('decel', str(v.brakingAcceleration))
         vtype.setAttribute('emergencyDecel', str(v.fullBrakingAcceleration))
         vtype.setAttribute('minGap', str(v.driverProfile.securityDistanceToObjectAhead))
+        vtype.setAttribute('vClass', str(v.vClass))
+        vtype.setAttribute('emissionClass', str(v.emissionClass))
         vtype.setAttribute('color', str(v.color))
         vtype.setAttribute('guiShape', str(v.shape))
         routes.appendChild(vtype)
 
-    #aggiunta dell'XML generato
+    # scrittura dell'XML generato
     with open(VEHICLETYPES_FILE_PATH, 'w') as fd:
         fd.write(rootXML.toprettyxml(indent="    "))
 
-#aggiunta veicoli alla simulazione
-def addVehiclesToSimulation(vehicleList):
+# aggiunta veicoli alla simulazione
+def addVehiclesToSimulation(vehicleList, filename):
     for v in vehicleList:
         departLane = randint(0,1)
+        v.routeID = "route" + str(randint(FIRST_ROUTE, LAST_ROUTE))
         traci.vehicle.add(vehID=v.vehicleID, routeID=v.routeID, typeID='vtype-'+v.vehicleID, depart=v.depart, departSpeed=v.initialCarSpeed, departLane=departLane)
+
+    #riscrittura dei veicoli sul file ora che c'è l'informazione sulla route
+    vehicleList.dump(filename)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -72,6 +80,8 @@ if __name__ == "__main__":
     # generazione della popolazione
     vList = generateRandomVehicles()
 
+    # generazione del file dei vehicletypes
+    generateVehicleTypes(vList)
+
     # serializzazione
-    with open(arguments.filename, 'w') as fd:
-        yaml.dump(vList, fd)
+    vList.dump(arguments.filename)

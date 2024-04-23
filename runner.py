@@ -13,7 +13,7 @@ SMART_TRAFFIC_LIGHT_ON = False
 
 
 def startProgram():
-    traci.start(["sumo-gui", "-c", "sumo_xml_files/4way_crossing/4way_crossing.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
+    traci.start(["sumo-gui", "-c", "sumo_xml_files/3way_crossing/3way_crossing.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
 
 
 if 'SUMO_HOME' in os.environ:
@@ -24,8 +24,8 @@ else:
 
 
 # constanti
-INDUCTION_LOOP_START = ["ILE1dx","ILE1sx","ILE2dx","ILE2sx","ILE3dx","ILE3sx","ILE4dx","ILE4sx"]
-INDUCTION_LOOP_END = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx","IL-E4dx","IL-E4sx"]
+INDUCTION_LOOP_START = ["ILE1dx","ILE1sx","ILE2dx","ILE2sx","ILE3dx","ILE3sx"]
+INDUCTION_LOOP_END = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx"]
 
 
 if __name__ == '__main__':
@@ -38,9 +38,9 @@ if __name__ == '__main__':
     # inizializzazione e avvio SUMO
     with open(arguments.population_file, 'r') as fd:
         vehicleList = yaml.unsafe_load(fd)
-    generateVehicleTypes(vehicleList)
+
     startProgram()
-    addVehiclesToSimulation(vehicleList)
+    addVehiclesToSimulation(vehicleList, arguments.population_file)
 
     smartTrafficLight = list()
     for tl in traci.trafficlight.getIDList():

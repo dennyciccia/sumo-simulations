@@ -3,6 +3,7 @@ from random import randint
 import random
 import numpy as np
 import traci
+import yaml
 from profiles import DriverProfile
 
 
@@ -11,6 +12,10 @@ class VehicleList(list):
         for v in self:
             if v.vehicleID == vehicleID:
                 return v
+
+    def dump(self, filename):
+        with open(filename, 'w') as fd:
+            yaml.dump(self, fd)
 
     """def __dict__(self):
         obj_dict = dict()
@@ -21,10 +26,10 @@ class VehicleList(list):
 
 
 class VehicleClass(ABC):
-    def __init__(self, id, r, l, w, ics, hst, a, nga, ba, fba, dp, ec, d=-1):
+    def __init__(self, id, l, w, ics, hst, a, nga, ba, fba, dp, ec, d=-1):
         # parametri statici
         self.__vehicleID = id
-        self.__routeID = r
+        self.__routeID = -1
         self.__carLength = l
         self.__carWeight = w
         self.__initialCarSpeed = ics
@@ -83,6 +88,10 @@ class VehicleClass(ABC):
     @property
     def routeID(self):
         return self.__routeID
+
+    @routeID.setter
+    def routeID(self, value):
+        self.__routeID = value
 
     @property
     def carLength(self): # m
@@ -251,9 +260,6 @@ class VehicleClass(ABC):
         # profilo dell'autista
         driverProfile = DriverProfile.generateRandom()
 
-        # percorso
-        routeID = "route" + str(randint(1,12))
-
         # lunghezza
         carLength = float(np.random.normal(loc=4.6*cls.lengthMult, size=1)[0])
 
@@ -306,7 +312,7 @@ class VehicleClass(ABC):
                 euro = ["HBEFA4/UBus_Std_gt15-18t_80ties", "HBEFA4/UBus_Std_gt15-18t_Euro-I", "HBEFA4/UBus_Std_gt15-18t_Euro-II_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-III_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-IV_SCR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-V_SCR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-VI_A-C"]
                 emissionClass = random.choices(euro, weights=(6.48, 0.88, 9.02, 19.38, 5.78, 22.82, 35.54))[0]
 
-        return cls(vehicleID, routeID, carLength, carWeight, initialCarSpeed, hasStartStop, carAcceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, emissionClass)
+        return cls(vehicleID, carLength, carWeight, initialCarSpeed, hasStartStop, carAcceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, emissionClass)
 
 
 class SmallPetrolCar(VehicleClass):
