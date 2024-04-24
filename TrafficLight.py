@@ -74,9 +74,10 @@ class TrafficLight:
         # calcolo del tempo trascorso nella fase attuale
         self.elapsedTimePhase = round(traci.trafficlight.getPhaseDuration(self.tlID) - (traci.trafficlight.getNextSwitch(self.tlID) - traci.simulation.getTime()), 3)
         
-        # se siamo alla fine della fase giallo prova a saltare la fase di solo rosso se è sicuro farlo
-        if traci.trafficlight.getPhase(self.tlID) in [1,4] and 2.8 < self.elapsedTimePhase < 3.0:
-            self.tryToSkipRed()
+        if SECOND_ENHANCEMENT:
+            # se siamo alla fine della fase giallo prova a saltare la fase di solo rosso se è sicuro farlo
+            if traci.trafficlight.getPhase(self.tlID) in [1,4] and 2.8 < self.elapsedTimePhase < 3.0:
+                self.tryToSkipRed()
 
         # massimo 180s di verde per un flusso
         if self.elapsedTimePhase >= 180.0:

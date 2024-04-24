@@ -36,11 +36,10 @@ if __name__ == '__main__':
     arguments = parser.parse_args()
 
     # inizializzazione e avvio SUMO
-    with open(arguments.population_file, 'r') as fd:
-        vehicleList = yaml.unsafe_load(fd)
+    vehicleList = VehicleList.load(arguments.population_file)
 
     startProgram()
-    addVehiclesToSimulation(vehicleList, arguments.population_file)
+    addVehiclesToSimulation(vehicleList)
 
     smartTrafficLight = list()
     for tl in traci.trafficlight.getIDList():
@@ -115,9 +114,13 @@ if __name__ == '__main__':
 
     # scrittura dati dei veicoli
     with open(arguments.log_file, 'a') as fd:
-        for v in vehicleList:
-            print(f"{v.vehicleID},{v.totalDistance / 1000},{v.totalTravelTime},{v.totalWaitingTime},{v.meanSpeed * 3.6},{v.totalCO2Emissions},{v.totalCOEmissions},{v.totalHCEmissions},{v.totalPMxEmissions},{v.totalNOxEmissions},{v.totalFuelConsumption},{v.totalNoiseEmission}", file=fd)
+        for v in sorted(vehicleList, key=lambda x: x.numericalID):
+            print(f"{v.vehicleID},{v.totalDistance},{v.totalTravelTime},{v.totalWaitingTime},{v.meanSpeed},{v.totalCO2Emissions},{v.totalCOEmissions},{v.totalHCEmissions},{v.totalPMxEmissions},{v.totalNOxEmissions},{v.totalFuelConsumption},{v.totalNoiseEmission}", file=fd)
 
     traci.close()
     sys.stdout.flush()
-    
+
+
+# TODO: impostare distribuzione con dati ACI
+# TODO: adattare per poter passare come argomento quale configurazione usare per poter eseguire più esperimenti in automatico
+# TODO: correggere calcolo velocità media

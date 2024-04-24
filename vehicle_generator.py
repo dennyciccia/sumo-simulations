@@ -7,14 +7,11 @@ from xml.dom import minidom
 
 from vehicles import *
 
-VEHICLE_POPULATION_FILE_PATH = "data/vehicle_population.yaml"
 VEHICLETYPES_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
 VPH = 915
 TOTAL_TIME = 3600 # secondi
 N_VEHICLES = (VPH * TOTAL_TIME) / 3600
 VEHICLE_DISTRIBUTION = {'SmallPetrolCar': 0.210, 'SmallDieselCar': 0.373, 'BigPetrolCar': 0.034, 'BigDieselCar': 0.231, 'MediumVan': 0.139, 'BigVan': 0.009, 'Bus': 0.003}
-FIRST_ROUTE = 1
-LAST_ROUTE = 5
 
 # generazione degli oggetti dei veicoli
 def generateRandomVehicles():
@@ -63,25 +60,33 @@ def generateVehicleTypes(vehicleList):
         fd.write(rootXML.toprettyxml(indent="    "))
 
 # aggiunta veicoli alla simulazione
-def addVehiclesToSimulation(vehicleList, filename):
+def addVehiclesToSimulation(vehicleList):
     for v in vehicleList:
         departLane = randint(0,1)
-        v.routeID = "route" + str(randint(FIRST_ROUTE, LAST_ROUTE))
         traci.vehicle.add(vehID=v.vehicleID, routeID=v.routeID, typeID='vtype-'+v.vehicleID, depart=v.depart, departSpeed=v.initialCarSpeed, departLane=departLane)
 
-    #riscrittura dei veicoli sul file ora che c'è l'informazione sulla route
+def generate_routes(filename, first_route, last_route):
+    vehicleList = VehicleList.load(filename)
+
+    for v in vehicleList:
+        v.routeID = randint(first_route, last_route)
+
     vehicleList.dump(filename)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--dest-file', default=VEHICLE_POPULATION_FILE_PATH, dest="filename", required=False)
+    parser.add_argument('-f', '--dest-file', dest="filename", required=True)
+    parser.add_argument('-r', '--generate-routes', nargs=2, type=int, dest="routes", metavar=("first route", "last route"), required=False)
     arguments = parser.parse_args()
 
-    # generazione della popolazione
-    vList = generateRandomVehicles()
-
-    # generazione del file dei vehicletypes
-    generateVehicleTypes(vList)
-
-    # serializzazione
-    vList.dump(arguments.filename)
+    if arguments.routes is not None:
+        # generazione delle route per la mappa attuale specificando first e last route
+        first, last = arguments.routes
+        generate_routes(arguments.filename, first, last)
+    else:
+        # generazione della popolazione
+        vList = generateRandomVehicles()
+        # generazione del file dei vehicletypes
+        generateVehicleTypes(vList)
+        # serializzazione
+        vList.dump(arguments.filename)

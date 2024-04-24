@@ -17,6 +17,12 @@ class VehicleList(list):
         with open(filename, 'w') as fd:
             yaml.dump(self, fd)
 
+    @staticmethod
+    def load(filename):
+        with open(filename, 'r') as fd:
+            obj = yaml.unsafe_load(fd)
+        return obj
+
     """def __dict__(self):
         obj_dict = dict()
 
@@ -29,6 +35,7 @@ class VehicleClass(ABC):
     def __init__(self, id, l, w, ics, hst, a, nga, ba, fba, dp, ec, d=-1):
         # parametri statici
         self.__vehicleID = id
+        self.__numericalID = int(id.replace("vehicle",""))
         self.__routeID = -1
         self.__carLength = l
         self.__carWeight = w
@@ -84,6 +91,10 @@ class VehicleClass(ABC):
     @property
     def vehicleID(self):
         return self.__vehicleID
+
+    @property
+    def numericalID(self):
+        return self.__numericalID
     
     @property
     def routeID(self):
@@ -243,12 +254,12 @@ class VehicleClass(ABC):
         if not final:
             self.meanSpeed = self.meanSpeed + (traci.vehicle.getSpeed(self.vehicleID) - self.meanSpeed) / currentStep  # m/s
             if not (self.hasStartStop and traci.vehicle.getSpeed(self.vehicleID) < 0.2):
-                self.totalCO2Emissions += (traci.vehicle.getCO2Emission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000000  # Kg nell'ultimo step
-                self.totalCOEmissions += (traci.vehicle.getCOEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000000  # Kg nell'ultimo step
-                self.totalHCEmissions += (traci.vehicle.getHCEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000000  # Kg nell'ultimo step
-                self.totalPMxEmissions += (traci.vehicle.getPMxEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000000  # Kg nell'ultimo step
-                self.totalNOxEmissions += (traci.vehicle.getNOxEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000000  # Kg nell'ultimo step
-                self.totalFuelConsumption += (traci.vehicle.getFuelConsumption(self.vehicleID) * traci.simulation.getDeltaT()) / 1000000  # Kg nell'ultimo step
+                self.totalCO2Emissions += (traci.vehicle.getCO2Emission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+                self.totalCOEmissions += (traci.vehicle.getCOEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+                self.totalHCEmissions += (traci.vehicle.getHCEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+                self.totalPMxEmissions += (traci.vehicle.getPMxEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+                self.totalNOxEmissions += (traci.vehicle.getNOxEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+                self.totalFuelConsumption += (traci.vehicle.getFuelConsumption(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
                 self.totalNoiseEmission += traci.vehicle.getNoiseEmission(self.vehicleID)  # dBA nell'ultimo step
         else:
             self.totalWaitingTime = traci.vehicle.getAccumulatedWaitingTime(self.vehicleID)  # s
