@@ -29,6 +29,7 @@ if __name__ == '__main__':
     # parsing argomenti
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--population-file', dest="population_file", required=True)
+    parser.add_argument('-l', '--log-dir', dest="logdir", required=True)
     parser.add_argument('-stl', '--smart-traffic-light', choices=["ON", "OFF"], dest="smart_traffic_light", required=True)
     parser.add_argument('-e', '--enhancements', choices=[1,2], nargs='*', type=int, dest="enhancements", required=False)
     arguments = parser.parse_args()
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     print(f"Emissione media di CO2: {(totalEmissions * 1000) / (totalDistance / 1000)} g/Km")
 
     # scrittura dati dei veicoli
-    logfile = "log_stl" + arguments.smart_traffic_light + '_'
+    logfile = "logs/" + arguments.logdir + "/log_stl" + arguments.smart_traffic_light + '_'
     if len(arguments.enhancements) > 0:
         logfile += "e"
         for e in arguments.enhancements: logfile += str(e)
