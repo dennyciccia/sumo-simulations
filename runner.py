@@ -9,9 +9,6 @@ from vehicle_generator import *
 from vehicles import *
 
 
-SMART_TRAFFIC_LIGHT_ON = False
-
-
 def startProgram():
     traci.start(["sumo-gui", "-c", "sumo_xml_files/3way_crossing/3way_crossing.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
 
@@ -32,8 +29,13 @@ if __name__ == '__main__':
     # parsing argomenti
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--population-file', dest="population_file", required=True)
-    parser.add_argument('-l', '--log-file', dest="log_file", required=True)
+    parser.add_argument('-stl', '--smart-traffic-light', choices=["ON", "OFF"], dest="smart_traffic_light", required=True)
+    parser.add_argument('-e', '--enhancements', choices=[1,2], nargs='*', type=int, dest="enhancements", required=False)
     arguments = parser.parse_args()
+
+    if len(arguments.enhancements) > 2:
+        print("Massimo due argomenti per -e / --enhancements")
+        exit()
 
     # inizializzazione e avvio SUMO
     vehicleList = VehicleList.load(arguments.population_file)
@@ -43,8 +45,8 @@ if __name__ == '__main__':
 
     smartTrafficLight = list()
     for tl in traci.trafficlight.getIDList():
-        smartTrafficLight.append(TrafficLight(tlID=tl))
-        if SMART_TRAFFIC_LIGHT_ON:
+        smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=arguments.enhancements))
+        if arguments.smart_traffic_light == "ON":
             traci.trafficlight.setProgram(tl, "1")
         else:
             traci.trafficlight.setProgram(tl, "0")
@@ -69,7 +71,7 @@ if __name__ == '__main__':
                     enteredVehicles.append(elem)
 
         # step semafori
-        if SMART_TRAFFIC_LIGHT_ON:
+        if arguments.smart_traffic_light == "ON":
             for trafficLight in smartTrafficLight:
                 trafficLight.performStep()
 
@@ -78,13 +80,13 @@ if __name__ == '__main__':
             vehicleList.getVehicle(vehicleID).doMeasures(step)
 
             # emissioni (misure intermedie)
-            v = traci.vehicle.getSpeed(vehicleID)
-            a = traci.vehicle.getAcceleration(vehicleID)
-            s = traci.vehicle.getSlope(vehicleID) # sempre 0.0
+            #v = traci.vehicle.getSpeed(vehicleID)
+            #a = traci.vehicle.getAcceleration(vehicleID)
+            #s = traci.vehicle.getSlope(vehicleID) # sempre 0.0
             #emission = vehicleList.getVehicle(vehicleID).getCO2emission(v, a, s)/36000 # Kg/100ms
+            #totalEmissions += emission if emission >= 0 else 0
             emission = (traci.vehicle.getCO2Emission(vehicleID) * traci.simulation.getDeltaT()) / 1000000 # Kg/100ms
-            totalEmissions += emission if emission >= 0 else 0
-        
+
             # distanza totale percorsa e tempo totale di attesa
             for indLoopID in INDUCTION_LOOP_END:
                 if vehicleID in traci.inductionloop.getLastStepVehicleIDs(indLoopID):
@@ -113,14 +115,19 @@ if __name__ == '__main__':
     print(f"Emissione media di CO2: {(totalEmissions * 1000) / (totalDistance / 1000)} g/Km")
 
     # scrittura dati dei veicoli
-    with open(arguments.log_file, 'a') as fd:
+    logfile = "log_stl" + arguments.smart_traffic_light + '_'
+    if len(arguments.enhancements) > 0:
+        logfile += "e"
+        for e in arguments.enhancements: logfile += str(e)
+
+    with open(logfile, 'w') as fd:
+        print("Smart traffic light: " + arguments.smart_traffic_light + ",Enhancements: " + arguments.enhancements, file=fd)
+        print("VehicleID,Distanza percorsa (m),Tempo di percorrenza (s),Tempo di attesa (s),Velocità media (m/s),Emissioni di CO2 (g),Emissioni di CO (g),Emissioni di HC (g),Emissioni di PMx (g),Emissioni di NOx (g),Consumo di carburante (g),Consumo elettrico (Wh),Emissione di rumore (dBA)", file=fd)
         for v in sorted(vehicleList, key=lambda x: x.numericalID):
-            print(f"{v.vehicleID},{v.totalDistance},{v.totalTravelTime},{v.totalWaitingTime},{v.meanSpeed},{v.totalCO2Emissions},{v.totalCOEmissions},{v.totalHCEmissions},{v.totalPMxEmissions},{v.totalNOxEmissions},{v.totalFuelConsumption},{v.totalNoiseEmission}", file=fd)
+            print(f"{v.vehicleID},{v.totalDistance},{v.totalTravelTime},{v.totalWaitingTime},{v.meanSpeed},{v.totalCO2Emissions},{v.totalCOEmissions},{v.totalHCEmissions},{v.totalPMxEmissions},{v.totalNOxEmissions},{v.totalFuelConsumption},{v.totalElectricityConsumption},{v.totalNoiseEmission}", file=fd)
 
     traci.close()
     sys.stdout.flush()
 
 
-# TODO: impostare distribuzione con dati ACI
-# TODO: adattare per poter passare come argomento quale configurazione usare per poter eseguire più esperimenti in automatico
 # TODO: correggere calcolo velocità media
