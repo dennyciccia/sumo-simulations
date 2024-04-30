@@ -34,19 +34,19 @@ class DriverProfile:
     @staticmethod
     def generateRandom():
         # distanza di sicurezza
-        d = float(abs(np.random.normal(loc=7, scale=2, size=1)[0]))
+        distance = float(abs(np.random.normal(loc=7, scale=2, size=1)[0]))
         
         # tempo di reazione
-        t = float(abs(np.random.normal(loc=0.1, scale=0.05, size=1)[0]))
+        reactionTime = float(abs(np.random.normal(loc=0.1, scale=0.05, size=1)[0]))
         
         # aggressività
         min, max = 0.0, 1.0
         while True:
-            a = round(float(np.random.normal(loc=0.5, size=1)[0]), 2)
+            aggressivity = round(float(np.random.normal(loc=0.5, size=1)[0]), 2)
             if min <= a <= max:
                 break
         
         # rispetto del limite di velocità
-        l = float(np.random.normal(loc=1, scale=0.2, size=1)[0])
+        limit = float(np.random.normal(loc=1, scale=0.2, size=1)[0])
 
-        return DriverProfile(d, t, a, l)
+        return DriverProfile(distance, reactionTime, aggressivity, limit)

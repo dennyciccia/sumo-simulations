@@ -11,7 +11,7 @@ VEHICLETYPES_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
 VPH = 915
 TOTAL_TIME = 3600 # secondi
 N_VEHICLES = (VPH * TOTAL_TIME) / 3600
-VEHICLE_DISTRIBUTION = {'SmallPetrolCar': 0.210, 'SmallDieselCar': 0.373, 'BigPetrolCar': 0.034, 'BigDieselCar': 0.231, 'MediumVan': 0.139, 'BigVan': 0.009, 'Bus': 0.003}
+VEHICLE_DISTRIBUTION = {'PassengerCar': 75.890, 'LightCommercialVehicle': 8.343, 'HeavyGoodsVehicle': 1.393, 'Truck': 0.403, 'MotorCycle': 13.781, 'Bus': 0.189}
 
 # generazione degli oggetti dei veicoli
 def generateRandomVehicles():
@@ -43,9 +43,9 @@ def generateVehicleTypes(vehicleList):
     for v in vehicleList:
         vtype = rootXML.createElement('vType')
         vtype.setAttribute('id', 'vtype-'+v.vehicleID)
-        vtype.setAttribute('length', str(v.carLength))
-        vtype.setAttribute('mass', str(v.carWeight))
-        vtype.setAttribute('accel', str(v.carAcceleration))
+        vtype.setAttribute('length', str(v.length))
+        vtype.setAttribute('mass', str(v.weight))
+        vtype.setAttribute('accel', str(v.acceleration))
         vtype.setAttribute('decel', str(v.brakingAcceleration))
         vtype.setAttribute('emergencyDecel', str(v.fullBrakingAcceleration))
         vtype.setAttribute('minGap', str(v.driverProfile.securityDistanceToObjectAhead))
@@ -63,7 +63,7 @@ def generateVehicleTypes(vehicleList):
 def addVehiclesToSimulation(vehicleList):
     for v in vehicleList:
         departLane = randint(0,1)
-        traci.vehicle.add(vehID=v.vehicleID, routeID=v.routeID, typeID='vtype-'+v.vehicleID, depart=v.depart, departSpeed=v.initialCarSpeed, departLane=departLane)
+        traci.vehicle.add(vehID=v.vehicleID, routeID=v.routeID, typeID='vtype-'+v.vehicleID, depart=v.depart, departSpeed=v.initialSpeed, departLane=departLane)
 
 def generate_routes(filename, first_route, last_route):
     vehicleList = VehicleList.load(filename)
