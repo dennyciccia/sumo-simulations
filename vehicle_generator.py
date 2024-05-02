@@ -24,10 +24,7 @@ def generateRandomVehicles():
             vehicleList.append(eval(vtype).generateRandom("vehicle"+str(vehicleCounter)))
             vehicleCounter += 1
 
-    # rimescolamento in modo che i tipi di veicoli partano in ordine sparso
-    random.shuffle(vehicleList)
-
-    # calcolo istanti di partenze
+    # assegnamento istanti di partenze casuali
     for v in vehicleList:
         v.depart = randint(0, TOTAL_TIME)
     

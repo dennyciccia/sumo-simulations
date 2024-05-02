@@ -124,7 +124,7 @@ if __name__ == '__main__':
     with open(logfile, 'w') as fd:
         print("Smart traffic light: " + arguments.smart_traffic_light + ",Enhancements: " + arguments.enhancements, file=fd)
         print("VehicleID,Distanza percorsa (m),Tempo di percorrenza (s),Tempo di attesa (s),Velocità media (m/s),Emissioni di CO2 (g),Emissioni di CO (g),Emissioni di HC (g),Emissioni di PMx (g),Emissioni di NOx (g),Consumo di carburante (g),Consumo elettrico (Wh),Emissione di rumore (dBA)", file=fd)
-        for v in sorted(vehicleList, key=lambda x: x.numericalID):
+        for v in vehicleList:
             print(f"{v.vehicleID},{v.totalDistance},{v.totalTravelTime},{v.totalWaitingTime},{v.meanSpeed},{v.totalCO2Emissions},{v.totalCOEmissions},{v.totalHCEmissions},{v.totalPMxEmissions},{v.totalNOxEmissions},{v.totalFuelConsumption},{v.totalElectricityConsumption},{v.totalNoiseEmission}", file=fd)
 
     traci.close()
