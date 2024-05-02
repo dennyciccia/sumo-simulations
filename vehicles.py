@@ -266,11 +266,10 @@ class Vehicle(ABC):
         return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * self.ConversionFactor
     """
 
-    def doMeasures(self, currentStep, final=False):
+    def doMeasures(self, step, final=False):
         if not final:
-            #self.meanSpeed = self.meanSpeed + (traci.vehicle.getSpeed(self.vehicleID) - self.meanSpeed) / currentStep  # m/s
-            self.meanSpeed = ((currentStep - 1) * self.meanSpeed + traci.vehicle.getSpeed(self.vehicleID)) / currentStep # m/s
-            if not (self.hasStartStop and traci.vehicle.getSpeed(self.vehicleID) < 0.2):
+            self.meanSpeed = ((step - 1) * self.meanSpeed + traci.vehicle.getSpeed(self.vehicleID)) / step # m/s
+            if not (self.hasStartStop and traci.vehicle.getSpeed(self.vehicleID) < 0.3):
                 self.totalCO2Emissions += (traci.vehicle.getCO2Emission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
                 self.totalCOEmissions += (traci.vehicle.getCOEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
                 self.totalHCEmissions += (traci.vehicle.getHCEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
@@ -365,7 +364,7 @@ class Vehicle(ABC):
                         elif 1305 < weight <= 1760:
                             classes = ["HBEFA4/LCV_diesel_N1-II_convlt_1981", "HBEFA4/LCV_diesel_N1-II_Euro-1", "HBEFA4/LCV_diesel_N1-II_Euro-2", "HBEFA4/LCV_diesel_N1-II_Euro-3", "HBEFA4/LCV_diesel_N1-II_Euro-4", "HBEFA4/LCV_diesel_N1-II_Euro-5", "HBEFA4/LCV_diesel_N1-II_Euro-6ab"]
                         elif weight > 1760:
-                            classes = ["HBEFA4/LCV_diesel_N1-III_XXIII", "HBEFA4/LCV_diesel_N1-III_Euro-1", "HBEFA4/LCV_diesel_N1-III_Euro-2", "HBEFA4/LCV_diesel_N1-III_Euro-3", "HBEFA4/LCV_diesel_N1-III_Euro-4", "HBEFA4/LCV_diesel_N1-III_Euro-5", "HBEFA4/LCV_diesel_N1-III_Euro-6ab"]
+                            classes = ["HBEFA4/LCV_diesel_N1-III_convlt_1986", "HBEFA4/LCV_diesel_N1-III_Euro-1", "HBEFA4/LCV_diesel_N1-III_Euro-2", "HBEFA4/LCV_diesel_N1-III_Euro-3", "HBEFA4/LCV_diesel_N1-III_Euro-4", "HBEFA4/LCV_diesel_N1-III_Euro-5", "HBEFA4/LCV_diesel_N1-III_Euro-6ab"]
                         emissionClass = random.choices(classes, weights=(10.94, 5.60, 10.97, 17.05, 17.57, 11.82, 26.04))[0]
                     case "phev/petrol":
                         if weight <= 1305:

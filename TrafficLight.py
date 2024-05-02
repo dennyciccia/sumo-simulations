@@ -58,7 +58,7 @@ class TrafficLight:
                 if 1 not in self.enhancements:
                     costB += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
                 else:
-                    costB += J + (30 if self.movingFlow == 'HORIZONTAL' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costB += J + (30 if self.movingFlow == 'VERTICAL' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
         
         return costA, costB
     
