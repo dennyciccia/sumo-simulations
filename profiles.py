@@ -43,7 +43,7 @@ class DriverProfile:
         min, max = 0.0, 1.0
         while True:
             aggressivity = round(float(np.random.normal(loc=0.5, size=1)[0]), 2)
-            if min <= a <= max:
+            if min <= aggressivity <= max:
                 break
         
         # rispetto del limite di velocità

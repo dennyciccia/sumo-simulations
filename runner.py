@@ -31,10 +31,10 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--population-file', dest="population_file", required=True, metavar="path/to/vehicle_population_file", help="File della popolazione dei veicoli")
     parser.add_argument('-l', '--log-dir', dest="logdir", required=True, metavar="DIR", help="Directory in cui salvare i file di log (solo il nome)")
     parser.add_argument('-stl', '--smart-traffic-light', choices=["ON", "OFF"], dest="smart_traffic_light", required=True, metavar="ON | OFF", help="Accensione o meno del semaforo intelligente")
-    parser.add_argument('-e', '--enhancements', choices=[1,2], nargs='*', type=int, dest="enhancements", required=False, metavar=('1', '2'), help="Numero del migliramento dell'alogritmo che si vuole usare (1, 2, 1 2")
+    parser.add_argument('-e', '--enhancements', choices=[1,2], nargs='*', type=int, dest="enhancements", required=False, metavar="[1] [2]", help="Numero del migliramento dell'alogritmo che si vuole usare (1, 2, 1 2)")
     arguments = parser.parse_args()
 
-    if len(arguments.enhancements) > 2:
+    if arguments.enhancements is not None and len(arguments.enhancements) > 2:
         print("Massimo due argomenti per -e / --enhancements")
         exit()
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     # scrittura dati dei veicoli
     logfile = "logs/" + arguments.logdir + "/log_stl" + arguments.smart_traffic_light
-    if len(arguments.enhancements) > 0:
+    if arguments.enhancements is not None and len(arguments.enhancements) > 0:
         logfile += "_e"
         for e in arguments.enhancements: logfile += str(e)
 
