@@ -72,7 +72,7 @@ def generate_routes(filename, first_route, last_route):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Modulo per generare i veicoli")
-    parser.add_argument('-f', '--dest-file', dest="filename", required=True, metavar="path/to/vehicle_population_file", help="File in cui vengono salvati i veicoli")
+    parser.add_argument('-f', '--dest-file', dest="filename", required=True, metavar="vehicle_population_filename", help="File in cui vengono salvati i veicoli (solo il nome senza estensione)")
     parser.add_argument('-r', '--generate-routes', nargs=2, type=int, dest="routes", required=False, metavar=('N', 'M'), help="ID numerici della prima e dell'ultima route per la mappa attuale")
     arguments = parser.parse_args()
 

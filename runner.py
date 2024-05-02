@@ -1,6 +1,8 @@
 import argparse
 import os
 import sys
+import time
+
 from TrafficLight import TrafficLight
 import traci
 import yaml
@@ -9,8 +11,8 @@ from vehicle_generator import *
 from vehicles import *
 
 
-def startProgram():
-    traci.start(["sumo-gui", "-c", "sumo_xml_files/3way_crossing/3way_crossing.sumocfg", "--step-length", "0.1", "--waiting-time-memory", "500", "--start"])
+def startProgram(mapname):
+    traci.start(["sumo-gui", "-c", "sumo_xml_files/" + mapname + "/" + mapname + ".sumocfg", "--step-length", "0.1", "--waiting-time-memory", "1000", "--start"])
 
 
 if 'SUMO_HOME' in os.environ:
@@ -20,7 +22,7 @@ else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
 
-# constanti
+# costanti
 INDUCTION_LOOP_START = ["ILE1dx","ILE1sx","ILE2dx","ILE2sx","ILE3dx","ILE3sx"]
 INDUCTION_LOOP_END = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx"]
 
@@ -29,7 +31,7 @@ if __name__ == '__main__':
     # parsing argomenti
     parser = argparse.ArgumentParser(description="Modulo per eseguire le simulazioni")
     parser.add_argument('-p', '--population-file', dest="population_file", required=True, metavar="path/to/vehicle_population_file", help="File della popolazione dei veicoli")
-    parser.add_argument('-l', '--log-dir', dest="logdir", required=True, metavar="DIR", help="Directory in cui salvare i file di log (solo il nome)")
+    parser.add_argument('-n', '--map-name', dest="mapname", required=True, metavar="NAME", help="Nome dello scenario")
     parser.add_argument('-stl', '--smart-traffic-light', choices=["ON", "OFF"], dest="smart_traffic_light", required=True, metavar="ON | OFF", help="Accensione o meno del semaforo intelligente")
     parser.add_argument('-e', '--enhancements', choices=[1,2], nargs='*', type=int, dest="enhancements", required=False, metavar="[1] [2]", help="Numero del migliramento dell'alogritmo che si vuole usare (1, 2, 1 2)")
     arguments = parser.parse_args()
@@ -41,12 +43,12 @@ if __name__ == '__main__':
     # inizializzazione e avvio SUMO
     vehicleList = VehicleList.load(arguments.population_file)
 
-    startProgram()
+    startProgram(arguments.mapname)
     addVehiclesToSimulation(vehicleList)
 
     smartTrafficLight = list()
     for tl in traci.trafficlight.getIDList():
-        smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=arguments.enhancements))
+        smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
         if arguments.smart_traffic_light == "ON":
             traci.trafficlight.setProgram(tl, "1")
         else:
@@ -57,6 +59,7 @@ if __name__ == '__main__':
     enteredVehicles = list()
     step = 0
     meanSpeed = 0
+    VmeanSpeed = 0
     totalWaitingTime = 0
 
     # avvio simulazione
@@ -107,25 +110,35 @@ if __name__ == '__main__':
         meanSpeedAtStep /= traci.edge.getIDCount()
         # velocità media fino a ora
         meanSpeed = (meanSpeed * (step-1) + meanSpeedAtStep) / step
+
+        VmeanSpeedAtStep = 0
+        for v in enteredVehicles:
+            VmeanSpeedAtStep += traci.vehicle.getSpeed(v)
+        if len(enteredVehicles) != 0:
+            VmeanSpeedAtStep /= len(enteredVehicles)
+            VmeanSpeed = ((step - 1) * VmeanSpeed + VmeanSpeedAtStep) / step
     
     # risultati misure intermedie
     print(f"Distanza totale percorsa: {totalDistance / 1000} Km")
-    print(f"Velocità media: {meanSpeed * 3.6} Km/h")
+    print(f"Velocità media: edge={meanSpeed * 3.6}, vehicles={VmeanSpeed * 3.6} Km/h")
     print(f"Tempo totale di attesa: {totalWaitingTime} s")
     print(f"Emissioni totali di CO2: {totalEmissions} Kg")
     print(f"Emissione media di CO2: {(totalEmissions * 1000) / (totalDistance / 1000)} g/Km")
 
     # scrittura dati dei veicoli
-    logfile = "logs/" + arguments.logdir + "/log_stl" + arguments.smart_traffic_light
+    if not os.path.exists("logs/" + arguments.mapname):
+        os.mkdir("logs/" + arguments.mapname)
+
+    logfile = "logs/" + arguments.mapname + "/log_stl" + arguments.smart_traffic_light
     if arguments.enhancements is not None and len(arguments.enhancements) > 0:
         logfile += "_e"
         for e in arguments.enhancements: logfile += str(e)
+    logfile += '_' + str(int(time.time())) + ".csv"
 
     with open(logfile, 'w') as fd:
-        print("Smart traffic light: " + arguments.smart_traffic_light + ",Enhancements: " + arguments.enhancements, file=fd)
-        print("VehicleID,Distanza percorsa (m),Tempo di percorrenza (s),Tempo di attesa (s),Velocità media (m/s),Emissioni di CO2 (g),Emissioni di CO (g),Emissioni di HC (g),Emissioni di PMx (g),Emissioni di NOx (g),Consumo di carburante (g),Consumo elettrico (Wh),Emissione di rumore (dBA)", file=fd)
+        print("VehicleID;Distanza percorsa (m);Tempo di percorrenza (s);Tempo di attesa (s);Velocità media (m/s);Emissioni di CO2 (g);Emissioni di CO (g);Emissioni di HC (g);Emissioni di PMx (g);Emissioni di NOx (g);Consumo di carburante (g);Consumo elettrico (Wh);Emissione di rumore (dBA)", file=fd)
         for v in vehicleList:
-            print(f"{v.vehicleID},{v.totalDistance},{v.totalTravelTime},{v.totalWaitingTime},{v.meanSpeed},{v.totalCO2Emissions},{v.totalCOEmissions},{v.totalHCEmissions},{v.totalPMxEmissions},{v.totalNOxEmissions},{v.totalFuelConsumption},{v.totalElectricityConsumption},{v.totalNoiseEmission}", file=fd)
+            print(f"{v.vehicleID};{v.totalDistance};{v.totalTravelTime};{v.totalWaitingTime};{v.meanSpeed};{v.totalCO2Emissions};{v.totalCOEmissions};{v.totalHCEmissions};{v.totalPMxEmissions};{v.totalNOxEmissions};{v.totalFuelConsumption};{v.totalElectricityConsumption};{v.totalNoiseEmission}", file=fd)
 
     traci.close()
     sys.stdout.flush()
