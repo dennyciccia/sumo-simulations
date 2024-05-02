@@ -11,9 +11,8 @@ Cambiare mappa:
 5. generare le routes per i veicoli per quella mappa passando -r a vehicle_generator
 
 Cambiare distribuzione veicoli:
-1. eseguire vehicle_generator passando come parametro il nome del file della popolazione
-2. cambiare la variabile VEHICLE_DISTRIBUTION in vehicle_generator
+1. cambiare le costanti VPH, TOTAL_TIME, VEHICLE_DISTRIBUTION in vehicle_generator
+2. eseguire vehicle_generator passando come parametro il nome del file della popolazione
 
-Cambiare funzionamento semafori:
-1. cambiare la variabile SMART_TRAFFIC_LIGHT in runner
-2. cambiare le variabili FIRST_ENHANCEMENT e SECOND_ENHANCEMENT in TrafficLight
+## Argomenti
+
