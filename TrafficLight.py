@@ -19,9 +19,9 @@ class TrafficLight:
     
     @property
     def movingFlow(self):
-        if traci.trafficlight.getPhase(self.tlID) in [0,1,2]:   # flusso orizzontale
+        if traci.trafficlight.getPhase(self.tlID) in [3,4,5]:   # flusso orizzontale
             return 'HORIZONTAL'
-        elif traci.trafficlight.getPhase(self.tlID) in [3,4,5]: # flusso verticale
+        elif traci.trafficlight.getPhase(self.tlID) in [0,1,2]: # flusso verticale
             return 'VERTICAL'
 
     @property
@@ -40,7 +40,7 @@ class TrafficLight:
         return ["E1", "E3"]
 
     def getVerticalEdges(self):
-        return ["E2"]
+        return ["E2", "E4"]
     
     # calcolo dei costi dei flussi
     def getFlowCosts(self):
@@ -63,12 +63,12 @@ class TrafficLight:
         return costH, costV
     
     def tryToSkipRed(self):
-        meanSpeedA = (traci.edge.getLastStepMeanSpeed("E1") * traci.edge.getLastStepMeanSpeed("E3")) / 2
-        vehicleNumberA = traci.edge.getLastStepVehicleNumber("E1") + traci.edge.getLastStepVehicleNumber("E3")
-        meanSpeedB = traci.edge.getLastStepMeanSpeed("E2")
-        vehicleNumberB = traci.edge.getLastStepVehicleNumber("E2")
+        meanSpeedH = (traci.edge.getLastStepMeanSpeed("E1") * traci.edge.getLastStepMeanSpeed("E3")) / 2
+        vehicleNumberH = traci.edge.getLastStepVehicleNumber("E1") + traci.edge.getLastStepVehicleNumber("E3")
+        meanSpeedV = (traci.edge.getLastStepMeanSpeed("E2") * traci.edge.getLastStepMeanSpeed("E4")) / 2
+        vehicleNumberV = traci.edge.getLastStepVehicleNumber("E2") + traci.edge.getLastStepVehicleNumber("E4")
         # se i veicoli sono fermi o non ci sono vai alla fase verde
-        if (self.movingFlow == 'HORIZONTAL' and (meanSpeedA < 1.0 or vehicleNumberA == 0)) or (self.movingFlow == 'VERTICAL' and (meanSpeedB < 1.0 or vehicleNumberB == 0)):
+        if (self.movingFlow == 'HORIZONTAL' and (meanSpeedH < 1.0 or vehicleNumberH == 0)) or (self.movingFlow == 'VERTICAL' and (meanSpeedV < 1.0 or vehicleNumberV == 0)):
             traci.trafficlight.setPhase(self.tlID, (traci.trafficlight.getPhase(self.tlID)+2)%6)
     
     # azioni eseguite a ogni step della simulazione
