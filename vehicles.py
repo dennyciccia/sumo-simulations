@@ -268,7 +268,7 @@ class Vehicle(ABC):
 
     def doMeasures(self, step, final=False):
         if not final:
-            self.meanSpeed = ((step - 1) * self.meanSpeed + traci.vehicle.getSpeed(self.vehicleID)) / step # m/s
+            #self.meanSpeed = ((step - 1) * self.meanSpeed + traci.vehicle.getSpeed(self.vehicleID)) / step # m/s
             if not (self.hasStartStop and traci.vehicle.getSpeed(self.vehicleID) < 0.3):
                 self.totalCO2Emissions += (traci.vehicle.getCO2Emission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
                 self.totalCOEmissions += (traci.vehicle.getCOEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
@@ -282,6 +282,7 @@ class Vehicle(ABC):
             self.totalWaitingTime = traci.vehicle.getAccumulatedWaitingTime(self.vehicleID)  # s
             self.totalDistance = traci.vehicle.getDistance(self.vehicleID)  # m
             self.totalTravelTime = traci.simulation.getTime() - traci.vehicle.getDeparture(self.vehicleID)  # s
+            self.meanSpeed = self.totalDistance / self.totalTravelTime
 
     @classmethod
     def generateRandom(cls, vehicleID):
@@ -299,7 +300,7 @@ class Vehicle(ABC):
         if cls.__name__ == "HeavyGoodsVehicle" and weight < 3501: weight = 3501
 
         # velocità iniziale
-        initialSpeed = (50.00 / 3.6) * driverProfile.speedLimitComplianceFactor
+        initialSpeed = 13.89 * driverProfile.speedLimitComplianceFactor
         if cls.__name__ == "Bus" and initialSpeed > 13.89: initialSpeed = 13.89
 
         # start&stop
@@ -312,8 +313,10 @@ class Vehicle(ABC):
         # decelerazione
         noGasAcceleration = float(np.random.normal(loc=0.5, size=1)[0])
         noGasAcceleration = 0.5 if noGasAcceleration < 0.5 else noGasAcceleration
-        brakingAcceleration = float(abs(np.random.normal(loc=3.0, size=1)[0]))
-        fullBrakingAcceleration = float(np.random.normal(loc=6, size=1)[0])
+        brakingAcceleration = float(abs(np.random.normal(loc=4.0, size=1)[0]))
+        if brakingAcceleration < 2 : brakingAcceleration = 2
+        fullBrakingAcceleration = float(np.random.normal(loc=10, size=1)[0])
+        if fullBrakingAcceleration < 7: fullBrakingAcceleration = 7
 
         # tipo di carburante e classe di emissioni
         fuels = ["petrol", "lpg/petrol", "cng/petrol", "electric", "diesel", "phev/petrol", "phev/diesel", "cng"]
@@ -444,22 +447,36 @@ class Vehicle(ABC):
                         emissionClass = random.choices(classes, weights=(29.65, 16.02, 11.56, 28.56, 8.60, 5.47))[0]
                     case "diesel":
                         classes = ["HBEFA4/MC_4S_gt250cc_preEuro", "HBEFA4/MC_4S_gt250cc_Euro-1", "HBEFA4/MC_4S_gt250cc_Euro-2", "HBEFA4/MC_4S_gt250cc_Euro-3", "HBEFA4/MC_4S_gt250cc_Euro-4", "HBEFA4/MC_4S_gt250cc_Euro-5"]
-                        emissionClass = random.choices(classes, weights=(29.65, 16.02, 11.56, 28.56, 8.60, 5.47))[0]
+                        emissionClass = random.choices(classes, weights=(21.58, 10.24, 12.17, 31.88, 15.12, 8.98))[0]
                     case "electric":
                         emissionClass = "HBEFA4/MC_BEV"
 
             case "Bus":
-                # Electric e diesel sono dei coach, CNG sono autobus urbani
-                fuelType = random.choices(fuels, weights=(0.00, 0.00, 0.00, 0.67, 46.52, 0.00, 0.00, 51.95))[0]
-                match fuelType:
-                    case "electric":
-                        emissionClass = "HBEFA4/Coach_BEV_Std_le18t"
-                    case "diesel":
+                busType = random.choices(["citybus", "coach"], weights=(51.95, 46.52))[0]
+                match busType:
+                    case "citybus":
+                        fuelType = random.choices(fuels, weights=(0.00, 0.00, 1.86, 4.89, 78.43, 0.00, 4.33, 10.48))[0]
+                        match fuelType:
+                            # in questo caso è GNL
+                            case "cng/petrol":
+                                classes = ["HBEFA4/UBus_Std_gt15-18t_LNG_Euro-IV", "HBEFA4/UBus_Std_gt15-18t_LNG_Euro-V", "HBEFA4/UBus_Std_gt15-18t_LNG_Euro-VI"]
+                                emissionClass = random.choices(classes, weights=(5.78, 22.82, 35.54))[0]
+                            case "electric":
+                                emissionClass = "HBEFA4/UBus_Electric_Std_gt15-18t"
+                                cls.shape = "bus/trolley"
+                            case "diesel":
+                                classes = ["HBEFA4/UBus_Std_gt15-18t_80ties", "HBEFA4/UBus_Std_gt15-18t_Euro-I", "HBEFA4/UBus_Std_gt15-18t_Euro-II_(DPF)", "HBEFA4/Bus_Std_gt15-18t_Euro-III_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-IV_EGR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-V_SCR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-VI_A-C"]
+                                emissionClass = random.choices(classes, weights=(6.48, 0.88, 9.02, 19.38, 5.78, 22.82, 35.54))[0]
+                            case "phev/diesel":
+                                classes = ["HBEFA4/UBus_Std_gt15-18t_HEV_Euro-IV", "HBEFA4/UBus_Std_gt15-18t_HEV_Euro-V", "HBEFA4/UBus_Std_gt15-18t_HEV_Euro-VI_D-E"]
+                                emissionClass = random.choices(classes, weights=(5.78, 22.82, 35.54))[0]
+                            case "cng":
+                                classes = ["HBEFA4/UBus_Std_gt15-18t_CNG_Euro-II", "HBEFA4/UBus_Std_gt15-18t_CNG_Euro-III", "HBEFA4/UBus_Std_gt15-18t_CNG_Euro-IV", "HBEFA4/UBus_Std_gt15-18t_CNG_Euro-V", "HBEFA4/UBus_Std_gt15-18t_CNG_Euro-VI"]
+                                emissionClass = random.choices(classes, weights=(9.02, 19.38, 5.78, 22.82, 35.54))[0]
+                    case "coach":
+                        fuelType = "diesel"
                         classes = ["HBEFA4/Coach_Std_le18t_80ties", "HBEFA4/Coach_Std_le18t_Euro-I", "HBEFA4/Coach_Std_le18t_Euro-II", "HBEFA4/Coach_Std_le18t_Euro-III", "HBEFA4/Coach_Std_le18t_Euro-IV_SCR", "HBEFA4/Coach_Std_le18t_Euro-V_SCR", "HBEFA4/Coach_Std_le18t_Euro-VI_A-C"]
                         emissionClass = random.choices(classes, weights=(16.45, 4.56, 14.16, 17.94, 8.90, 13.50, 24.30))[0]
-                    case "cng":
-                        classes = ["HBEFA4/UBus_Std_gt15-18t_80ties", "HBEFA4/UBus_Std_gt15-18t_Euro-I", "HBEFA4/UBus_Std_gt15-18t_Euro-II_(DPF)", "HBEFA4/Bus_Std_gt15-18t_Euro-III_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-IV_EGR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-V_SCR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-VI_A-C"]
-                        emissionClass = random.choices(classes, weights=(6.48, 0.88, 9.02, 19.38, 5.78, 22.82, 35.54))[0]
 
         return cls(vehicleID, length, weight, initialSpeed, hasStartStop, acceleration, noGasAcceleration, brakingAcceleration, fullBrakingAcceleration, driverProfile, fuelType, emissionClass)
 

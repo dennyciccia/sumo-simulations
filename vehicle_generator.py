@@ -72,18 +72,18 @@ def generate_routes(filename, first_route, last_route):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Modulo per generare i veicoli")
-    parser.add_argument('-f', '--dest-file', dest="filename", required=True, metavar="vehicle_population_filename", help="File in cui vengono salvati i veicoli (solo il nome senza estensione)")
+    parser.add_argument('-f', '--dest-file', dest="filename", required=True, metavar="path/to/vehicle_population_filename.yaml", help="File in cui vengono salvati i veicoli")
     parser.add_argument('-r', '--generate-routes', nargs=2, type=int, dest="routes", required=False, metavar=('N', 'M'), help="ID numerici della prima e dell'ultima route per la mappa attuale")
     arguments = parser.parse_args()
 
     if arguments.routes is not None:
         # generazione delle route per la mappa attuale specificando first e last route
         first, last = arguments.routes
-        generate_routes("data/" + arguments.filename + ".yaml", first, last)
+        generate_routes(arguments.filename, first, last)
     else:
         # generazione della popolazione
         vList = generateRandomVehicles()
         # generazione del file dei vehicletypes
         generateVehicleTypes(vList)
         # serializzazione
-        vList.dump("data/" + arguments.filename + ".yaml")
+        vList.dump(arguments.filename)

@@ -64,7 +64,6 @@ if __name__ == '__main__':
     enteredVehicles = list()
     step = 0
     meanSpeed = 0
-    VmeanSpeed = 0
     totalWaitingTime = 0
 
     # avvio simulazione
@@ -95,6 +94,7 @@ if __name__ == '__main__':
             #emission = vehicleList.getVehicle(vehicleID).getCO2emission(v, a, s)/36000 # Kg/100ms
             #totalEmissions += emission if emission >= 0 else 0
             emission = (traci.vehicle.getCO2Emission(vehicleID) * traci.simulation.getDeltaT()) / 1000000 # Kg/100ms
+            totalEmissions += emission
 
             # distanza totale percorsa e tempo totale di attesa
             for indLoopID in eval("INDUCTION_LOOP_END_" + arguments.mapname):
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     
     # risultati misure intermedie
     print(f"Distanza totale percorsa: {totalDistance / 1000} Km")
-    print(f"Velocità media: edge={meanSpeed * 3.6}, vehicles={VmeanSpeed * 3.6} Km/h")
+    print(f"Velocità media: {meanSpeed * 3.6} Km/h")
     print(f"Tempo totale di attesa: {totalWaitingTime} s")
     print(f"Emissioni totali di CO2: {totalEmissions} Kg")
     print(f"Emissione media di CO2: {(totalEmissions * 1000) / (totalDistance / 1000)} g/Km")
