@@ -2,11 +2,8 @@ import argparse
 import os
 import sys
 import time
-
-from TrafficLight import TrafficLight
 import traci
-import yaml
-
+from TrafficLight import TrafficLight
 from vehicle_generator import *
 from vehicles import *
 
@@ -118,13 +115,6 @@ if __name__ == '__main__':
         meanSpeedAtStep /= traci.edge.getIDCount()
         # velocità media fino a ora
         meanSpeed = (meanSpeed * (step-1) + meanSpeedAtStep) / step
-
-        VmeanSpeedAtStep = 0
-        for v in enteredVehicles:
-            VmeanSpeedAtStep += traci.vehicle.getSpeed(v)
-        if len(enteredVehicles) != 0:
-            VmeanSpeedAtStep /= len(enteredVehicles)
-            VmeanSpeed = ((step - 1) * VmeanSpeed + VmeanSpeedAtStep) / step
     
     # risultati misure intermedie
     print(f"Distanza totale percorsa: {totalDistance / 1000} Km")
@@ -144,12 +134,9 @@ if __name__ == '__main__':
     logfile += '_' + str(int(time.time())) + ".csv"
 
     with open(logfile, 'w') as fd:
-        print("VehicleID;Distanza percorsa (m);Tempo di percorrenza (s);Tempo di attesa (s);Velocità media (m/s);Emissioni di CO2 (g);Emissioni di CO (g);Emissioni di HC (g);Emissioni di PMx (g);Emissioni di NOx (g);Consumo di carburante (g);Consumo elettrico (Wh);Emissione di rumore (dBA)", file=fd)
+        print("VehicleID;Distanza percorsa (m);Tempo di percorrenza (s);Tempo di attesa (s);Velocita media (m/s);Emissioni di CO2 (g);Emissioni di CO (g);Emissioni di HC (g);Emissioni di PMx (g);Emissioni di NOx (g);Consumo di carburante (g);Consumo elettrico (Wh);Emissione di rumore (dBA)", file=fd)
         for v in vehicleList:
             print(f"{v.vehicleID};{v.totalDistance};{v.totalTravelTime};{v.totalWaitingTime};{v.meanSpeed};{v.totalCO2Emissions};{v.totalCOEmissions};{v.totalHCEmissions};{v.totalPMxEmissions};{v.totalNOxEmissions};{v.totalFuelConsumption};{v.totalElectricityConsumption};{v.totalNoiseEmission}", file=fd)
 
     traci.close()
     sys.stdout.flush()
-
-
-# TODO: correggere calcolo velocità media
