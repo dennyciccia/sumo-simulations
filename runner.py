@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--map-name', dest="mapname", required=True, metavar="NAME", help="Nome dello scenario")
     parser.add_argument('-stl', '--smart-traffic-light', choices=["ON", "OFF"], dest="smart_traffic_light", required=True, metavar="ON | OFF", help="Accensione o meno del semaforo intelligente")
     parser.add_argument('-e', '--enhancements', choices=[1,2], nargs='*', type=int, dest="enhancements", required=False, metavar="[1] [2]", help="Numero del migliramento dell'alogritmo che si vuole usare (1, 2, 1 2)")
+    parser.add_argument('-s', '--skip-route-check', action="store_true", dest="skip_route_check", required=False, help="Controllo delle routes")
     arguments = parser.parse_args()
 
     if arguments.enhancements is not None and len(arguments.enhancements) > 2:
@@ -37,9 +38,19 @@ if __name__ == '__main__':
 
     exec("from induction_loop_constants import INDUCTION_LOOP_START_" + arguments.mapname + ", INDUCTION_LOOP_END_" + arguments.mapname)
 
-    # inizializzazione e avvio SUMO
+    # inizializzazione
     vehicleList = VehicleList.load(arguments.population_file)
 
+    # controllo routes
+    if not arguments.skip_route_check:
+        route_set = set()
+        for v in vehicleList:
+            route_set.add(v.routeID)
+        with open("sumo_xml_files/" + arguments.mapname + "/" + arguments.mapname + ".rou.xml", 'r') as fd:
+            lines = len(fd.readlines())
+        if lines-3 != len(route_set): print(f"\033[91m {'!!! Route non corrette !!!'}\033[00m")
+
+    # avvio SUMO
     startProgram(arguments.mapname)
     addVehiclesToSimulation(vehicleList)
 

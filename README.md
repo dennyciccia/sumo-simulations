@@ -18,11 +18,12 @@ Progetto per il tirocinio di laurea triennale
 
 ### Eseguire una simulazione:
 
-Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON | OFF) -e (1 | 2 | 1 2)```
+Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON | OFF) -e (1 | 2 | 1 2) [-s]```
    - ```-p``` indica il file contenente la popolazione di veicoli
    - ```-n``` indica il nome della mappa attuale
    - ```-stl``` indica lo stato del semaforo intelligente (ON/OFF)
    - ```-e``` indica quali enhancements usare per il semaforo intelligente (nessuno, 1, 2, 1 2)
+   - ```-s``` salta il controllo delle routes (il controllo serve per evitare di dimenticarsi di generarle), non consigliato
 
 **Prima di eseguire una simulazione:**
 - impostare la mappa
