@@ -5,4 +5,11 @@
     <route id="route3" edges="E2 -E1"/>
     <route id="route4" edges="E2 -E3"/>
     <route id="route5" edges="E3 -E1"/>
+    <route id="route6" edges="E1 -E3"/>
+    <route id="route7" edges="E1 -E2"/>
+    <route id="route8" edges="E2 -E1"/>
+    <route id="route9" edges="E2 -E3"/>
+    <route id="route10" edges="E3 -E1"/>
+    <route id="route11" edges="E1 -E3"/>
+    <route id="route12" edges="E1 -E2"/>
 </routes>

@@ -9,7 +9,7 @@ from vehicles import *
 
 
 def startProgram(mapname):
-    traci.start(["sumo-gui", "-c", "sumo_xml_files/" + mapname + "/" + mapname + ".sumocfg", "--step-length", "0.1", "--waiting-time-memory", "1000", "--start"])
+    traci.start(["sumo-gui", "-c", "sumo_xml_files/" + mapname + "/" + mapname + ".sumocfg", "--step-length", "0.1", "--waiting-time-memory", "1000", "--start", "--quit-on-end"])
 
 
 if 'SUMO_HOME' in os.environ:
@@ -45,7 +45,7 @@ if __name__ == '__main__':
             route_set.add(v.routeID)
         with open("sumo_xml_files/" + arguments.mapname + "/" + arguments.mapname + ".rou.xml", 'r') as fd:
             lines = len(fd.readlines())
-        if lines-3 != len(route_set): print(f"\033[91m {'!!! Route non corrette !!!'}\033[00m")
+        if lines-3 != len(route_set): print(f"\033[91m {'!!! Routes non corrette !!!'}\033[00m")
 
     # avvio SUMO
     startProgram(arguments.mapname)

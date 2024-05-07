@@ -44,23 +44,23 @@ class TrafficLight:
     
     # calcolo dei costi dei flussi
     def getFlowCosts(self):
-        costA = costB = 0
+        costH = costV = 0
         
         for edge in self.getHorizontalEdges():
             for vehicle in traci.edge.getLastStepVehicleIDs(edge):
                 if 1 not in self.enhancements:
-                    costA += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costH += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
                 else:
-                    costA += J + (30 if self.movingFlow == 'HORIZONTAL' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costH += J + (30 if self.movingFlow == 'HORIZONTAL' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
 
         for edge in self.getVerticalEdges():
             for vehicle in traci.edge.getLastStepVehicleIDs(edge):
                 if 1 not in self.enhancements:
-                    costB += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costV += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
                 else:
-                    costB += J + (30 if self.movingFlow == 'VERTICAL' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costV += J + (30 if self.movingFlow == 'VERTICAL' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
         
-        return costA, costB
+        return costH, costV
     
     def tryToSkipRed(self):
         meanSpeedA = (traci.edge.getLastStepMeanSpeed("E1") * traci.edge.getLastStepMeanSpeed("E3")) / 2
@@ -88,6 +88,6 @@ class TrafficLight:
         
         # minimo 10s di verde per un flusso e controllo di non essere in una fase con giallo o solo rosso
         if self.elapsedTimePhase > 10 and traci.trafficlight.getPhase(self.tlID) not in [1,2,4,5]:
-            costA, costB = self.getFlowCosts()
-            if (self.movingFlow == 'HORIZONTAL' and costA < costB) or (self.movingFlow == 'VERTICAL' and costB < costA):
+            costH, costV = self.getFlowCosts()
+            if (self.movingFlow == 'HORIZONTAL' and costH < costV) or (self.movingFlow == 'VERTICAL' and costV < costH):
                 self.switchTrafficLight()
