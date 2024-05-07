@@ -22,11 +22,6 @@ else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
 
-# costanti
-INDUCTION_LOOP_START = ["ILE1dx","ILE1sx","ILE2dx","ILE2sx","ILE3dx","ILE3sx"]
-INDUCTION_LOOP_END = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx"]
-
-
 if __name__ == '__main__':
     # parsing argomenti
     parser = argparse.ArgumentParser(description="Modulo per eseguire le simulazioni")
@@ -39,6 +34,8 @@ if __name__ == '__main__':
     if arguments.enhancements is not None and len(arguments.enhancements) > 2:
         print("Massimo due argomenti per -e / --enhancements")
         exit()
+
+    exec("from induction_loop_constants import INDUCTION_LOOP_START_" + arguments.mapname + ", INDUCTION_LOOP_END_" + arguments.mapname)
 
     # inizializzazione e avvio SUMO
     vehicleList = VehicleList.load(arguments.population_file)
@@ -68,7 +65,7 @@ if __name__ == '__main__':
         step += 1
 
         # veicoli entrati nella simulazione
-        for indLoopID in INDUCTION_LOOP_START:
+        for indLoopID in eval("INDUCTION_LOOP_START_" + arguments.mapname):
             vehicles = traci.inductionloop.getLastStepVehicleIDs(indLoopID)
             for elem in vehicles:
                 if elem not in enteredVehicles:
@@ -92,7 +89,7 @@ if __name__ == '__main__':
             emission = (traci.vehicle.getCO2Emission(vehicleID) * traci.simulation.getDeltaT()) / 1000000 # Kg/100ms
 
             # distanza totale percorsa e tempo totale di attesa
-            for indLoopID in INDUCTION_LOOP_END:
+            for indLoopID in eval("INDUCTION_LOOP_END_" + arguments.mapname):
                 if vehicleID in traci.inductionloop.getLastStepVehicleIDs(indLoopID):
                     vehicleList.getVehicle(vehicleID).doMeasures(step, final=True)
 

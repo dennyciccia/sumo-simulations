@@ -7,6 +7,7 @@ Progetto per il tirocinio di laurea triennale
 1. aggiungere i file della mappa nella sua cartella in sumo_xml_files
 2. cambiare gli induction loop dalle variabili INDUCTION_LOOP_START e INDUCTION_LOOP_END in runner
 3. generare le routes per i veicoli per quella mappa passando -r a vehicle_generator
+2. cambiare gli induction loop dalle variabili INDUCTION_LOOP_START e INDUCTION_LOOP_END in 'induction_loop_constants.py'
 
 **Cambiare distribuzione veicoli:**
 1. cambiare le costanti VPH, TOTAL_TIME, VEHICLE_DISTRIBUTION in vehicle_generator
