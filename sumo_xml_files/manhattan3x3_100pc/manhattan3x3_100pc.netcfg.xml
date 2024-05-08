@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-05-08 13:42:54 by 
+-->
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/Configuration.xsd">
+
+    <grid_network>
+        <grid value="true"/>
+        <grid.number value="3"/>
+        <grid.length value="160"/>
+        <grid.x-number value="3"/>
+        <grid.y-number value="3"/>
+        <grid.attach-length value="160"/>
+    </grid_network>
+
+    <spider_network>
+        <spider value="false"/>
+    </spider_network>
+
+    <random_network>
+        <rand value="false"/>
+        <rand.grid value="false"/>
+    </random_network>
+
+    <output>
+        <output-file value="../../../../../../../../../Program Files (x86)/Eclipse/Sumo/manhattan3x3_100pc.net.xml"/>
+    </output>
+
+    <processing>
+        <numerical-ids value="true"/>
+        <numerical-ids.node-start value="0"/>
+        <numerical-ids.edge-start value="1"/>
+    </processing>
+
+    <building_defaults>
+        <default.lanenumber value="2"/>
+        <default-junction-type value="traffic_light"/>
+    </building_defaults>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+        <no-turnarounds.tls value="true"/>
+    </junctions>
+
+</configuration>
