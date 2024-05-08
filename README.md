@@ -29,3 +29,8 @@ Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON 
 - impostare la mappa
 - impostare la distribuzione (numero di veicoli che girano)
 - generare la popolazione
+
+### Regole per costruire una mappa
+
+1. I semafori devono avere 6 fasi, per ogni direzione una fase di verde, una fase di giallo che dura 3s e una fase di rosso.
+2. La prima fase di un semaforo deve essere quella in cui si muove il flusso verticale.

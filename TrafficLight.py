@@ -1,4 +1,5 @@
 import traci
+import re
 
 J = 100
 K = 1
@@ -37,10 +38,26 @@ class TrafficLight:
         traci.trafficlight.setPhase(self.tlID, traci.trafficlight.getPhase(self.tlID)+1)
 
     def getHorizontalEdges(self):
-        return ["E1", "E3"]
+        controlledEdges = [re.sub(r'_.*', '', lane) for lane in traci.trafficlight.getControlledLanes(self.tlID)]
+        controlledEdges = list(set(controlledEdges))
+
+        horizontalEdges = []
+        for edge in controlledEdges:
+            if traci.edge.getAngle(edge) in [90.0, 270.0]:
+                horizontalEdges.append(edge)
+
+        return horizontalEdges
 
     def getVerticalEdges(self):
-        return ["E2", "E4"]
+        controlledEdges = [re.sub(r'_.*', '', lane) for lane in traci.trafficlight.getControlledLanes(self.tlID)]
+        controlledEdges = list(set(controlledEdges))
+
+        verticalEdges = []
+        for edge in controlledEdges:
+            if traci.edge.getAngle(edge) in [0.0, 180.0]:
+                verticalEdges.append(edge)
+
+        return verticalEdges
     
     # calcolo dei costi dei flussi
     def getFlowCosts(self):
@@ -63,10 +80,19 @@ class TrafficLight:
         return costH, costV
     
     def tryToSkipRed(self):
-        meanSpeedH = (traci.edge.getLastStepMeanSpeed("E1") * traci.edge.getLastStepMeanSpeed("E3")) / 2
-        vehicleNumberH = traci.edge.getLastStepVehicleNumber("E1") + traci.edge.getLastStepVehicleNumber("E3")
-        meanSpeedV = (traci.edge.getLastStepMeanSpeed("E2") * traci.edge.getLastStepMeanSpeed("E4")) / 2
-        vehicleNumberV = traci.edge.getLastStepVehicleNumber("E2") + traci.edge.getLastStepVehicleNumber("E4")
+        meanSpeedH = meanSpeedV = 0
+        vehicleNumberH = vehicleNumberV = 0
+
+        for edge in self.getHorizontalEdges():
+            meanSpeedH += traci.edge.getLastStepMeanSpeed(edge)
+            vehicleNumberH += traci.edge.getLastStepVehicleNumber(edge)
+        meanSpeedH /= len(self.getHorizontalEdges())
+
+        for edge in self.getVerticalEdges():
+            meanSpeedV += traci.edge.getLastStepMeanSpeed(edge)
+            vehicleNumberV += traci.edge.getLastStepVehicleNumber(edge)
+        meanSpeedV /= len(self.getVerticalEdges())
+
         # se i veicoli sono fermi o non ci sono vai alla fase verde
         if (self.movingFlow == 'HORIZONTAL' and (meanSpeedH < 1.0 or vehicleNumberH == 0)) or (self.movingFlow == 'VERTICAL' and (meanSpeedV < 1.0 or vehicleNumberV == 0)):
             traci.trafficlight.setPhase(self.tlID, (traci.trafficlight.getPhase(self.tlID)+2)%6)
