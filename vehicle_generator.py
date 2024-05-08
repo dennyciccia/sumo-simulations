@@ -1,7 +1,4 @@
 import argparse
-import yaml
-from datetime import datetime
-import random
 from xml.dom import minidom 
 
 from vehicles import *
