@@ -254,35 +254,21 @@ class Vehicle(ABC):
     def totalNoiseEmission(self, value):
         self.__totalNoiseEmission = value
 
-    """
-    @staticmethod
-    def VSP(velocity, acceleration, slope): # W/Kg
-        return velocity*(1.1*acceleration + 9.81*slope + 0.132) + 0.000302*(velocity**3)
-    
-    def FC(self, vsp): # g/h
-        return ( ( self.A*(vsp**2) + self.B*vsp + self.C ) * self.carWeight ) / 1000
-
-    def getCO2emission(self, velocity, acceleration, slope): # Kg/h
-        return (self.FC(VehicleClass.VSP(velocity, acceleration, slope)) /1000) * self.ConversionFactor
-    """
-
-    def doMeasures(self, step, final=False):
-        if not final:
-            #self.meanSpeed = ((step - 1) * self.meanSpeed + traci.vehicle.getSpeed(self.vehicleID)) / step # m/s
-            if not (self.hasStartStop and traci.vehicle.getSpeed(self.vehicleID) < 0.3):
-                self.totalCO2Emissions += (traci.vehicle.getCO2Emission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
-                self.totalCOEmissions += (traci.vehicle.getCOEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
-                self.totalHCEmissions += (traci.vehicle.getHCEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
-                self.totalPMxEmissions += (traci.vehicle.getPMxEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
-                self.totalNOxEmissions += (traci.vehicle.getNOxEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
-                self.totalFuelConsumption += (traci.vehicle.getFuelConsumption(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
-                self.totalElectricityConsumption += (traci.vehicle.getElectricityConsumption(self.vehicleID) * traci.simulation.getDeltaT())  # Wh nell'ultimo step
-                self.totalNoiseEmission += traci.vehicle.getNoiseEmission(self.vehicleID)  # dBA nell'ultimo step
-        else:
-            self.totalWaitingTime = traci.vehicle.getAccumulatedWaitingTime(self.vehicleID)  # s
-            self.totalDistance = traci.vehicle.getDistance(self.vehicleID)  # m
-            self.totalTravelTime = traci.simulation.getTime() - traci.vehicle.getDeparture(self.vehicleID)  # s
-            self.meanSpeed = self.totalDistance / self.totalTravelTime
+    def doMeasures(self):
+        if not (self.hasStartStop and traci.vehicle.getSpeed(self.vehicleID) < 0.3):
+            self.totalCO2Emissions += (traci.vehicle.getCO2Emission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+            self.totalCOEmissions += (traci.vehicle.getCOEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+            self.totalHCEmissions += (traci.vehicle.getHCEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+            self.totalPMxEmissions += (traci.vehicle.getPMxEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+            self.totalNOxEmissions += (traci.vehicle.getNOxEmission(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+            self.totalFuelConsumption += (traci.vehicle.getFuelConsumption(self.vehicleID) * traci.simulation.getDeltaT()) / 1000  # g nell'ultimo step
+            self.totalNoiseEmission += traci.vehicle.getNoiseEmission(self.vehicleID)  # dBA nell'ultimo step
+        self.totalElectricityConsumption += (traci.vehicle.getElectricityConsumption(self.vehicleID) * traci.simulation.getDeltaT())  # Wh nell'ultimo step
+        self.totalWaitingTime = traci.vehicle.getAccumulatedWaitingTime(self.vehicleID)  # s
+        self.totalDistance = traci.vehicle.getDistance(self.vehicleID)  # m
+        self.totalTravelTime = traci.simulation.getTime() - traci.vehicle.getDeparture(self.vehicleID)  # s
+        self.meanSpeed = self.totalDistance / self.totalTravelTime  # m/s
+        # self.meanSpeed = ((step - 1) * self.meanSpeed + traci.vehicle.getSpeed(self.vehicleID)) / step # m/s
 
     @classmethod
     def generateRandom(cls, vehicleID):

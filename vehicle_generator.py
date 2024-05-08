@@ -2,7 +2,6 @@ import argparse
 import yaml
 from datetime import datetime
 import random
-import traci
 from xml.dom import minidom 
 
 from vehicles import *
@@ -55,12 +54,6 @@ def generateVehicleTypes(vehicleList):
     # scrittura dell'XML generato
     with open(VEHICLETYPES_FILE_PATH, 'w') as fd:
         fd.write(rootXML.toprettyxml(indent="    "))
-
-# aggiunta veicoli alla simulazione
-def addVehiclesToSimulation(vehicleList):
-    for v in vehicleList:
-        departLane = randint(0,1)
-        traci.vehicle.add(vehID=v.vehicleID, routeID=v.routeID, typeID='vtype-'+v.vehicleID, depart=v.depart, departSpeed=v.initialSpeed, departLane=departLane)
 
 def generate_routes(filename, first_route, last_route):
     vehicleList = VehicleList.load(filename)
