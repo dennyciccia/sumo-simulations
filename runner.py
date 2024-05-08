@@ -53,8 +53,8 @@ if __name__ == '__main__':
 
     smartTrafficLight = list()
     for tl in traci.trafficlight.getIDList():
-        smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
         if arguments.smart_traffic_light == "ON":
+            smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
             traci.trafficlight.setProgram(tl, "1")
         else:
             traci.trafficlight.setProgram(tl, "0")
@@ -140,5 +140,3 @@ if __name__ == '__main__':
 
     traci.close()
     sys.stdout.flush()
-
-# TODO: implementare il semaforo che capisce da solo quali sono gli edge verticali e orizzontali
