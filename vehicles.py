@@ -4,7 +4,7 @@ import random
 import numpy as np
 import traci
 import yaml
-from profiles import DriverProfile
+from DriverProfile import DriverProfile
 
 
 class VehicleList(list):
@@ -22,13 +22,6 @@ class VehicleList(list):
         with open(filename, 'r') as fd:
             obj = yaml.unsafe_load(fd)
         return obj
-
-    """def __dict__(self):
-        obj_dict = dict()
-
-        obj_dict["vehicleList"] = self
-
-        return obj_dict"""
 
 
 class Vehicle(ABC):
@@ -62,33 +55,6 @@ class Vehicle(ABC):
         self.__totalFuelConsumption = 0
         self.__totalElectricityConsumption = 0
         self.__totalNoiseEmission = 0
-
-    """def __dict__(self):
-        obj_dict = dict()
-
-        obj_dict["vehicleID"] = self.vehicleID
-        obj_dict["routeID"] = self.routeID
-        obj_dict["carLength"] = self.carLength
-        obj_dict["carWeight"] = self.carWeight
-        obj_dict["initialCarSpeed"] = self.initialCarSpeed
-        obj_dict["hasStartStop"] = self.hasStartStop
-        obj_dict["carAcceleration"] = self.carAcceleration
-        obj_dict["noGasAcceleration"] = self.noGasAcceleration
-        obj_dict["brakingAcceleration"] = self.brakingAcceleration
-        obj_dict["fullBrakingAcceleration"] = self.fullBrakingAcceleration
-        obj_dict["depart"] = self.depart
-        obj_dict["driverProfile"] = self.driverProfile.__dict__
-
-        obj_dict["A"] = self.A
-        obj_dict["B"] = self.B
-        obj_dict["C"] = self.C
-        obj_dict["ConversionFactor"] = self.ConversionFactor
-        obj_dict["lengthMult"] = self.lengthMult
-        obj_dict["weightMult"] = self.weightMult
-        obj_dict["color"] = self.color
-        obj_dict["shape"] = self.shape
-
-        return obj_dict"""
 
     @property
     def vehicleID(self):
