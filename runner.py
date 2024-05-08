@@ -141,6 +141,4 @@ if __name__ == '__main__':
     traci.close()
     sys.stdout.flush()
 
-# TODO: invertire le fasi del semaforo in 3way_crossing e 4way_crossing, deve essere come 4way_crossing_160m
 # TODO: implementare il semaforo che capisce da solo quali sono gli edge verticali e orizzontali
-# TODO: aggiungere mappa incrocio 4 vie con strade lunghe 150m
