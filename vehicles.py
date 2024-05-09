@@ -250,6 +250,7 @@ class Vehicle(ABC):
         weight = float(np.random.normal(loc=1600*cls.weightMult, scale=200, size=1)[0])
         if cls.__name__ == "LightCommercialVehicle" and weight > 3500: weight = 3500
         if cls.__name__ == "HeavyGoodsVehicle" and weight < 3501: weight = 3501
+        if weight < 0: weight = 550
 
         # velocità iniziale
         initialSpeed = 13.89 * driverProfile.speedLimitComplianceFactor
