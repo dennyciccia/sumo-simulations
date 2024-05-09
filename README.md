@@ -34,3 +34,4 @@ Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON 
 
 1. I semafori devono avere 6 fasi, per ogni direzione una fase di verde, una fase di giallo che dura 3s e una fase di rosso.
 2. La prima fase di un semaforo deve essere quella in cui si muove il flusso verticale.
+3. I semafori devono avere l'ID uguale a quello dell'incrocio in cui si trovano.

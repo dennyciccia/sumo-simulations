@@ -1,5 +1,4 @@
 import traci
-import re
 
 J = 100
 K = 1
@@ -8,7 +7,6 @@ class TrafficLight:
     def __init__(self, tlID, enhancements):
         self.__tlID = tlID
         self.__enhancements = enhancements  # lista dei miglioramenti dell'algoritmo
-        self.__elapsedTimePhase = 0     # da quanto tempo è attiva la fase corrente (s)
     
     @property
     def tlID(self):
@@ -25,35 +23,21 @@ class TrafficLight:
         elif traci.trafficlight.getPhase(self.tlID) in [0,1,2]: # flusso verticale
             return 'VERTICAL'
 
-    @property
-    def elapsedTimePhase(self):
-        return self.__elapsedTimePhase
-
-    @elapsedTimePhase.setter
-    def elapsedTimePhase(self, value):
-        self.__elapsedTimePhase = value
-
     # switch del semaforo per cambiare il flusso che si muove
     def switchTrafficLight(self):
         traci.trafficlight.setPhase(self.tlID, traci.trafficlight.getPhase(self.tlID)+1)
 
     def getHorizontalEdges(self):
-        controlledEdges = [re.sub(r'_.*', '', lane) for lane in traci.trafficlight.getControlledLanes(self.tlID)]
-        controlledEdges = list(set(controlledEdges))
-
         horizontalEdges = []
-        for edge in controlledEdges:
+        for edge in traci.junction.getIncomingEdges(self.tlID):
             if traci.edge.getAngle(edge) in [90.0, 270.0]:
                 horizontalEdges.append(edge)
 
         return horizontalEdges
 
     def getVerticalEdges(self):
-        controlledEdges = [re.sub(r'_.*', '', lane) for lane in traci.trafficlight.getControlledLanes(self.tlID)]
-        controlledEdges = list(set(controlledEdges))
-
         verticalEdges = []
-        for edge in controlledEdges:
+        for edge in traci.junction.getIncomingEdges(self.tlID):
             if traci.edge.getAngle(edge) in [0.0, 180.0]:
                 verticalEdges.append(edge)
 
@@ -99,21 +83,18 @@ class TrafficLight:
     
     # azioni eseguite a ogni step della simulazione
     def performStep(self):
-        # calcolo del tempo trascorso nella fase attuale
-        self.elapsedTimePhase = round(traci.trafficlight.getPhaseDuration(self.tlID) - (traci.trafficlight.getNextSwitch(self.tlID) - traci.simulation.getTime()), 3)
-        
         if 2 in self.enhancements:
             # se siamo alla fine della fase giallo prova a saltare la fase di solo rosso se è sicuro farlo
-            if traci.trafficlight.getPhase(self.tlID) in [1,4] and 2.8 < self.elapsedTimePhase < 3.0:
+            if traci.trafficlight.getPhase(self.tlID) in [1,4] and 2.8 < traci.trafficlight.getSpentDuration(self.tlID) < 3.0:
                 self.tryToSkipRed()
 
         # massimo 180s di verde per un flusso
-        if self.elapsedTimePhase >= 180.0:
+        if traci.trafficlight.getSpentDuration(self.tlID) >= 180.0:
             self.switchTrafficLight()
             return
         
         # minimo 10s di verde per un flusso e controllo di non essere in una fase con giallo o solo rosso
-        if self.elapsedTimePhase > 10 and traci.trafficlight.getPhase(self.tlID) not in [1,2,4,5]:
+        if traci.trafficlight.getSpentDuration(self.tlID) > 10 and traci.trafficlight.getPhase(self.tlID) not in [1,2,4,5]:
             costH, costV = self.getFlowCosts()
             if (self.movingFlow == 'HORIZONTAL' and costH < costV) or (self.movingFlow == 'VERTICAL' and costV < costH):
                 self.switchTrafficLight()
