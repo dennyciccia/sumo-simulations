@@ -27327,7 +27327,7 @@ listitems:
   _Vehicle__totalTravelTime: 0
   _Vehicle__totalWaitingTime: 0
   _Vehicle__vehicleID: vehicle853
-  _Vehicle__weight: -63.80758141811032
+  _Vehicle__weight: 550.80758141811032
 - !!python/object:vehicles.MotorCycle
   _Vehicle__acceleration: 3.6459055322872294
   _Vehicle__brakingAcceleration: 2.6352206227207944
