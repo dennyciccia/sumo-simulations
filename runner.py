@@ -9,7 +9,7 @@ from vehicles import VehicleList
 
 
 def startProgram(mapname):
-    traci.start(["sumo-gui", "-c", "sumo_xml_files/" + mapname + "/" + mapname + ".sumocfg", "--step-length", "0.1", "--waiting-time-memory", "1000", "--start", "--quit-on-end"])
+    traci.start(["sumo-gui", "-c", "sumo_xml_files/" + mapname + "/" + mapname + ".sumocfg", "--step-length", "0.1", "--waiting-time-memory", "1000", "--start"])
 
 
 def addVehiclesToSimulation(vehicleList):
@@ -173,5 +173,4 @@ INDUCTION_LOOP_END_4way_crossing_160m = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx"
     print(f"Emissione media di CO2: {(totalEmissions * 1000) / (totalDistance / 1000)} g/Km")
     """
 
-# TODO: generare routes per manhattan 3x3
 # TODO: provare a rendere il riconoscimento delle strade entranti in un semaforo indipendente dall'angolo (sumolib o osservazione stringa)

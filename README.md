@@ -5,7 +5,8 @@ Progetto per il tirocinio di laurea triennale
 
 **Cambiare mappa:**
 1. aggiungere i file della mappa nella sua cartella in 'sumo_xml_files/'
-2. generare le routes per i veicoli per quella mappa passando ```-r``` a 'vehicle_generator.py'
+2. per generare le routes per la mappa usare ```python $env:SUMO_HOME/tools/randomTrips.py -n <file.net.xml> -e <numero-routes> -r <file.rou.xml>``` poi assegnare gli id con lo script 'sumo_xml_files/routes_editor.py'
+3. generare le routes per i veicoli per quella mappa passando ```-r``` a 'vehicle_generator.py'
 
 **Cambiare distribuzione veicoli:**
 1. cambiare le costanti VPH, TOTAL_TIME, VEHICLE_DISTRIBUTION in 'vehicle_generator.py'
