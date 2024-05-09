@@ -33,6 +33,7 @@
         <tls.green.time value="42"/>
         <tls.yellow.time value="3"/>
         <tls.allred.time value="3"/>
+        <tls.no.mixed value="true"/>
     </tls_building>
 
     <junctions>
