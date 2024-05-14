@@ -18,7 +18,7 @@ Progetto per il tirocinio di laurea triennale
 
 ### Eseguire una simulazione:
 
-Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON | OFF) -e (1 | 2 | 1 2) [-s]```
+Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON | OFF) -e [1 | 2 | 1 2] [-s]```
    - ```-p``` indica il file contenente la popolazione di veicoli
    - ```-n``` indica il nome della mappa attuale
    - ```-stl``` indica lo stato del semaforo intelligente (ON/OFF)
