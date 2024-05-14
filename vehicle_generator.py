@@ -1,8 +1,7 @@
 import argparse
 from vehicles import *
 
-VEHICLETYPES_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
-VPH = 915
+VPH = 1179
 TOTAL_TIME = 3600 # secondi
 N_VEHICLES = (VPH * TOTAL_TIME) / 3600
 VEHICLE_DISTRIBUTION = {'PassengerCar': 0.75890, 'LightCommercialVehicle': 0.08343, 'HeavyGoodsVehicle': 0.01393, 'Truck': 0.00403, 'MotorCycle': 0.13781, 'Bus': 0.00189}
