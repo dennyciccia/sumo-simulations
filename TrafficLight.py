@@ -85,7 +85,7 @@ class TrafficLight:
     def performStep(self):
         if 2 in self.enhancements:
             # se siamo alla fine della fase giallo prova a saltare la fase di solo rosso se è sicuro farlo
-            if traci.trafficlight.getPhase(self.tlID) in [1,4] and 2.8 < traci.trafficlight.getSpentDuration(self.tlID) < 3.0:
+            if traci.trafficlight.getPhase(self.tlID) in [1,4] and 2 <= traci.trafficlight.getSpentDuration(self.tlID) < 3:
                 self.tryToSkipRed()
 
         # massimo 180s di verde per un flusso
