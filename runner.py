@@ -9,7 +9,7 @@ from vehicles import VehicleList
 
 
 def startProgram(mapname):
-    traci.start(["sumo-gui", "-c", "sumo_xml_files/" + mapname + "/" + mapname + ".sumocfg", "--step-length", "0.1", "--waiting-time-memory", "1000", "--start", "--quit-on-end"])
+    traci.start(["sumo-gui", "-c", "sumo_xml_files/" + mapname + "/" + mapname + ".sumocfg", "--waiting-time-memory", "1000", "--start", "--quit-on-end"])
 
 
 def addVehiclesToSimulation(vehicleList):
