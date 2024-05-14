@@ -823,7 +823,7 @@
         <phase duration="3"  state="yyyrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
-    <tlLogic id="C3" type="static" programID="0" offset="0">
+    <tlLogic id="C3" type="static" programID="1" offset="0">
         <phase duration="10000" state="rrrGGGrrr"/>
         <phase duration="3"  state="rrryyyyrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
