@@ -1,6 +1,4 @@
 import argparse
-from xml.dom import minidom 
-
 from vehicles import *
 
 VEHICLETYPES_FILE_PATH = "sumo_xml_files/vehicletypes.rou.xml"
@@ -26,32 +24,6 @@ def generateRandomVehicles():
     
     return vehicleList
 
-# generazione dei tipi dei veicoli e scrittura sul file XML
-def generateVehicleTypes(vehicleList):
-    rootXML = minidom.Document()
-    routes = rootXML.createElement('routes')
-    rootXML.appendChild(routes)
-
-    # creazione vTypes
-    for v in vehicleList:
-        vtype = rootXML.createElement('vType')
-        vtype.setAttribute('id', 'vtype-'+v.vehicleID)
-        vtype.setAttribute('length', str(v.length))
-        vtype.setAttribute('mass', str(v.weight))
-        vtype.setAttribute('accel', str(v.acceleration))
-        vtype.setAttribute('decel', str(v.brakingAcceleration))
-        vtype.setAttribute('emergencyDecel', str(v.fullBrakingAcceleration))
-        vtype.setAttribute('minGap', str(v.driverProfile.securityDistanceToObjectAhead))
-        vtype.setAttribute('vClass', str(v.vClass))
-        vtype.setAttribute('emissionClass', str(v.emissionClass))
-        vtype.setAttribute('color', str(v.color))
-        vtype.setAttribute('guiShape', str(v.shape))
-        routes.appendChild(vtype)
-
-    # scrittura dell'XML generato
-    with open(VEHICLETYPES_FILE_PATH, 'w') as fd:
-        fd.write(rootXML.toprettyxml(indent="    "))
-
 def generate_routes(filename, first_route, last_route):
     vehicleList = VehicleList.load(filename)
 
@@ -73,7 +45,5 @@ if __name__ == "__main__":
     else:
         # generazione della popolazione
         vList = generateRandomVehicles()
-        # generazione del file dei vehicletypes
-        generateVehicleTypes(vList)
         # serializzazione
         vList.dump(arguments.filename)

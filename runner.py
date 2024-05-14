@@ -4,12 +4,39 @@ import sys
 import time
 import random
 import traci
+from xml.dom import minidom
 from TrafficLight import TrafficLight
 from vehicles import VehicleList
 
 
 def startProgram(mapname):
     traci.start(["sumo-gui", "-c", "sumo_xml_files/" + mapname + "/" + mapname + ".sumocfg", "--waiting-time-memory", "1000", "--start", "--quit-on-end"])
+
+
+def generateVehicleTypesXML(vehicleList):
+    rootXML = minidom.Document()
+    routes = rootXML.createElement('routes')
+    rootXML.appendChild(routes)
+
+    # creazione vTypes
+    for v in vehicleList:
+        vtype = rootXML.createElement('vType')
+        vtype.setAttribute('id', 'vtype-'+v.vehicleID)
+        vtype.setAttribute('length', str(v.length))
+        vtype.setAttribute('mass', str(v.weight))
+        vtype.setAttribute('accel', str(v.acceleration))
+        vtype.setAttribute('decel', str(v.brakingAcceleration))
+        vtype.setAttribute('emergencyDecel', str(v.fullBrakingAcceleration))
+        vtype.setAttribute('minGap', str(v.driverProfile.securityDistanceToObjectAhead))
+        vtype.setAttribute('vClass', str(v.vClass))
+        vtype.setAttribute('emissionClass', str(v.emissionClass))
+        vtype.setAttribute('color', str(v.color))
+        vtype.setAttribute('guiShape', str(v.shape))
+        routes.appendChild(vtype)
+
+    # scrittura dell'XML generato
+    with open("sumo_xml_files/vehicletypes.rou.xml", 'w') as fd:
+        fd.write(rootXML.toprettyxml(indent="    "))
 
 
 def addVehiclesToSimulation(vehicleList):
@@ -43,6 +70,9 @@ def main():
         with open("sumo_xml_files/" + arguments.mapname + "/" + arguments.mapname + ".rou.xml", 'r') as fd:
             lines = len(fd.readlines())
         if lines-3 != len(route_set): print(f"\033[91m {'!!! Routes non corrette !!!'}\033[00m")
+
+    # generazione del file dei vehicletypes
+    generateVehicleTypesXML(vehicleList)
 
     # avvio SUMO
     startProgram(arguments.mapname)
