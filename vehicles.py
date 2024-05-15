@@ -418,7 +418,7 @@ class Vehicle(ABC):
                                 emissionClass = "HBEFA4/UBus_Electric_Std_gt15-18t"
                                 cls.shape = "bus/trolley"
                             case "diesel":
-                                classes = ["HBEFA4/UBus_Std_gt15-18t_80ties", "HBEFA4/UBus_Std_gt15-18t_Euro-I", "HBEFA4/UBus_Std_gt15-18t_Euro-II_(DPF)", "HBEFA4/Bus_Std_gt15-18t_Euro-III_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-IV_EGR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-V_SCR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-VI_A-C"]
+                                classes = ["HBEFA4/UBus_Std_gt15-18t_80ties", "HBEFA4/UBus_Std_gt15-18t_Euro-I", "HBEFA4/UBus_Std_gt15-18t_Euro-II_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-III_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-IV_EGR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-V_SCR_(DPF)", "HBEFA4/UBus_Std_gt15-18t_Euro-VI_A-C"]
                                 emissionClass = random.choices(classes, weights=(6.48, 0.88, 9.02, 19.38, 5.78, 22.82, 35.54))[0]
                             case "phev/diesel":
                                 classes = ["HBEFA4/UBus_Std_gt15-18t_HEV_Euro-IV", "HBEFA4/UBus_Std_gt15-18t_HEV_Euro-V", "HBEFA4/UBus_Std_gt15-18t_HEV_Euro-VI_D-E"]
