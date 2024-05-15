@@ -1151,7 +1151,7 @@
         <phase duration="3"  state="yyyrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="A1" type="static" programID="1" offset="0">
@@ -1159,7 +1159,7 @@
         <phase duration="3"  state="yyyrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="A2" type="static" programID="0" offset="0">
@@ -1167,7 +1167,7 @@
         <phase duration="3"  state="yyyrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="A2" type="static" programID="1" offset="0">
@@ -1175,7 +1175,7 @@
         <phase duration="3"  state="yyyrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="A3" type="static" programID="0" offset="0">
@@ -1183,7 +1183,7 @@
         <phase duration="3"  state="yyyrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="A3" type="static" programID="1" offset="0">
@@ -1191,12 +1191,12 @@
         <phase duration="3"  state="yyyrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="B0" type="static" programID="0" offset="0">
         <phase duration="42" state="GGGrrrrrr"/>
-        <phase duration="3"  state="yyyyrrrrr"/>
+        <phase duration="3"  state="yyyrrrrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrGGGGGg"/>
         <phase duration="3"  state="rrryyyyyy"/>
@@ -1204,7 +1204,7 @@
     </tlLogic>
     <tlLogic id="B0" type="static" programID="1" offset="0">
         <phase duration="10000" state="GGGrrrrrr"/>
-        <phase duration="3"  state="yyyyrrrrr"/>
+        <phase duration="3"  state="yyyrrrrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrGGGGGg"/>
         <phase duration="3"  state="rrryyyyyy"/>
@@ -1260,7 +1260,7 @@
     </tlLogic>
     <tlLogic id="B4" type="static" programID="0" offset="0">
         <phase duration="42" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="GGgrrrGGG"/>
         <phase duration="3"  state="yyyrrryyy"/>
@@ -1268,7 +1268,7 @@
     </tlLogic>
     <tlLogic id="B4" type="static" programID="1" offset="0">
         <phase duration="10000" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="GGgrrrGGG"/>
         <phase duration="3"  state="yyyrrryyy"/>
@@ -1276,7 +1276,7 @@
     </tlLogic>
     <tlLogic id="C0" type="static" programID="0" offset="0">
         <phase duration="42" state="GGGrrrrrr"/>
-        <phase duration="3"  state="yyyyrrrrr"/>
+        <phase duration="3"  state="yyyrrrrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrGGGGGg"/>
         <phase duration="3"  state="rrryyyyyy"/>
@@ -1284,7 +1284,7 @@
     </tlLogic>
     <tlLogic id="C0" type="static" programID="1" offset="0">
         <phase duration="10000" state="GGGrrrrrr"/>
-        <phase duration="3"  state="yyyyrrrrr"/>
+        <phase duration="3"  state="yyyrrrrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrGGGGGg"/>
         <phase duration="3"  state="rrryyyyyy"/>
@@ -1340,7 +1340,7 @@
     </tlLogic>
     <tlLogic id="C4" type="static" programID="0" offset="0">
         <phase duration="42" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="GGgrrrGGG"/>
         <phase duration="3"  state="yyyrrryyy"/>
@@ -1348,7 +1348,7 @@
     </tlLogic>
     <tlLogic id="C4" type="static" programID="1" offset="0">
         <phase duration="10000" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="GGgrrrGGG"/>
         <phase duration="3"  state="yyyrrryyy"/>
@@ -1356,7 +1356,7 @@
     </tlLogic>
     <tlLogic id="D0" type="static" programID="0" offset="0">
         <phase duration="42" state="GGGrrrrrr"/>
-        <phase duration="3"  state="yyyyrrrrr"/>
+        <phase duration="3"  state="yyyrrrrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrGGGGGg"/>
         <phase duration="3"  state="rrryyyyyy"/>
@@ -1364,7 +1364,7 @@
     </tlLogic>
     <tlLogic id="D0" type="static" programID="1" offset="0">
         <phase duration="10000" state="GGGrrrrrr"/>
-        <phase duration="3"  state="yyyyrrrrr"/>
+        <phase duration="3"  state="yyyrrrrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrGGGGGg"/>
         <phase duration="3"  state="rrryyyyyy"/>
@@ -1420,7 +1420,7 @@
     </tlLogic>
     <tlLogic id="D4" type="static" programID="0" offset="0">
         <phase duration="42" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="GGgrrrGGG"/>
         <phase duration="3"  state="yyyrrryyy"/>
@@ -1428,7 +1428,7 @@
     </tlLogic>
     <tlLogic id="D4" type="static" programID="1" offset="0">
         <phase duration="10000" state="rrrGGGrrr"/>
-        <phase duration="3"  state="rrryyyyrr"/>
+        <phase duration="3"  state="rrryyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="GGgrrrGGG"/>
         <phase duration="3"  state="yyyrrryyy"/>
@@ -1439,7 +1439,7 @@
         <phase duration="3"  state="yyyyyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrrrrGGG"/>
-        <phase duration="3"  state="yrrrrryyy"/>
+        <phase duration="3"  state="rrrrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="E1" type="static" programID="1" offset="0">
@@ -1447,7 +1447,7 @@
         <phase duration="3"  state="yyyyyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrrrrGGG"/>
-        <phase duration="3"  state="yrrrrryyy"/>
+        <phase duration="3"  state="rrrrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="E2" type="static" programID="0" offset="0">
@@ -1455,7 +1455,7 @@
         <phase duration="3"  state="yyyyyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrrrrGGG"/>
-        <phase duration="3"  state="yrrrrryyy"/>
+        <phase duration="3"  state="rrrrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="E2" type="static" programID="1" offset="0">
@@ -1463,7 +1463,7 @@
         <phase duration="3"  state="yyyyyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrrrrGGG"/>
-        <phase duration="3"  state="yrrrrryyy"/>
+        <phase duration="3"  state="rrrrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="E3" type="static" programID="0" offset="0">
@@ -1471,7 +1471,7 @@
         <phase duration="3"  state="yyyyyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="42" state="rrrrrrGGG"/>
-        <phase duration="3"  state="yrrrrryyy"/>
+        <phase duration="3"  state="rrrrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="E3" type="static" programID="1" offset="0">
@@ -1479,7 +1479,7 @@
         <phase duration="3"  state="yyyyyyrrr"/>
         <phase duration="3"  state="rrrrrrrrr"/>
         <phase duration="10000" state="rrrrrrGGG"/>
-        <phase duration="3"  state="yrrrrryyy"/>
+        <phase duration="3"  state="rrrrrryyy"/>
         <phase duration="3"  state="rrrrrrrrr"/>
     </tlLogic>
 
