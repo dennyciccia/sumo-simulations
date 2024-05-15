@@ -46089,7 +46089,7 @@ listitems:
     _DriverProfile__reactionTime: 0.16943939875846983
     _DriverProfile__securityDistanceToObjectAhead: 1.332397388284865
     _DriverProfile__speedLimitComplianceFactor: 0.9282076315835637
-  _Vehicle__emissionClass: HBEFA4/Bus_Std_gt15-18t_Euro-III_(DPF)
+  _Vehicle__emissionClass: HBEFA4/UBus_Std_gt15-18t_Euro-III_(DPF)
   _Vehicle__fuelType: diesel
   _Vehicle__fullBrakingAcceleration: 11.435443983842351
   _Vehicle__hasStartStop: false
