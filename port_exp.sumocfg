@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="port_exp2.net.xml"/>
+        <route-files value="port_exp.rou.xml"/>
+        <additional-files value="port_exp2.add.xml"/>
+    </input>
+
+    <gui-only>
+        <gui-settings-file value="port_exp.view.xml"/>
+    </gui-only>
+
+</configuration>
