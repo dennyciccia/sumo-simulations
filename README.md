@@ -1,5 +1,5 @@
 # Simulazioni SUMO
-Progetto per il tirocinio di laurea triennale
+Progetto per il tirocinio di laurea triennale.
 
 ## Istruzioni
 
@@ -35,3 +35,15 @@ Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON 
 1. I semafori devono avere 6 fasi, per ogni direzione una fase di verde, una fase di giallo che dura 3s e una fase di rosso.
 2. La prima fase di un semaforo deve essere quella in cui si muove il flusso verticale.
 3. I semafori devono avere l'ID uguale a quello dell'incrocio in cui si trovano.
+
+## Requisiti
+
+Il progetto è stato sviluppato su Windows 10 con SUMO 1.20.0.
+
+I requisiti sono specificati nel file `requirements.txt`.
+
+Per installarli eseguire il comando
+
+```
+pip install -r requirements.txt
+```
