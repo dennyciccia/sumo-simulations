@@ -1,13 +1,13 @@
 import argparse
 from vehicles import *
 
-VPH = 2235
-TOTAL_TIME = 3600 # secondi
-N_VEHICLES = (VPH * TOTAL_TIME) / 3600
 VEHICLE_DISTRIBUTION = {'PassengerCar': 0.75890, 'LightCommercialVehicle': 0.08343, 'HeavyGoodsVehicle': 0.01393, 'Truck': 0.00403, 'MotorCycle': 0.13781, 'Bus': 0.00189}
 
 # generazione degli oggetti dei veicoli
-def generateRandomVehicles():
+def generateRandomVehicles(vph):
+    TOTAL_TIME = 3600  # secondi
+    N_VEHICLES = (vph * TOTAL_TIME) / 3600
+
     vehicleList = VehicleList()
     vehicleCounter = 0
 
@@ -33,6 +33,7 @@ def generate_routes(filename, first_route, last_route):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Modulo per generare i veicoli")
+    parser.add_argument('-n', '--vehicle-number', type=int, dest="vph", required=False, metavar="N", help="Numero di veicoli da generare")
     parser.add_argument('-f', '--dest-file', dest="filename", required=True, metavar="path/to/vehicle_population_filename.yaml", help="File in cui vengono salvati i veicoli")
     parser.add_argument('-r', '--generate-routes', nargs=2, type=int, dest="routes", required=False, metavar=('N', 'M'), help="ID numerici della prima e dell'ultima route per la mappa attuale")
     arguments = parser.parse_args()
@@ -43,6 +44,6 @@ if __name__ == "__main__":
         generate_routes(arguments.filename, first, last)
     else:
         # generazione della popolazione
-        vList = generateRandomVehicles()
+        vList = generateRandomVehicles(arguments.vph)
         # serializzazione
         vList.dump(arguments.filename)
