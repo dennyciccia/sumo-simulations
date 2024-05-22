@@ -1,6 +1,45 @@
 # Simulazioni SUMO
 Progetto per il tirocinio di laurea triennale.
 
+## Funzionalità moduli
+
+### runner.py
+
+Carica i veicoli dal file specificato con `-p` e crea il file 'sumo_xml_files/vehicletypes.rou.xml'. <br/>
+Esegue la simulazione con i parametri specificati in `startProgram()` e aggiunge i veicoli alla simulazione. <br/>
+Inizializza la lista di semafori smart settando il Program 1 se è stato passato il parametro `-stl ON`. <br/>
+Avvia la simulazione e a ogni step:<br/>
+    -Aggiorna il set dei veicoli presenti nella simulazione aggiungendo quelli entrati e rimuovendo quelli usciti.<br/>
+    -Esegue le operazioni dei semafori.<br/>
+    -Misura i valori dei veicoli.<br/>
+Finita la simulazione scrive le misure in formato csv nella cartella 'logs'.
+
+### vehicle_generator.py
+
+Definisce la distribuzione dei veicoli con le percentuali per ogni tipo di veicolo.<br/>
+Se non viene passato il parametro `-r` il modulo genera la popolazione in formato yaml nel file specificato con `-f` con il numero di veicoli specificato con `-n`.<br/>
+Se viene passato il parametro `-r` vengono assegnate le routes alla popolazione di veicoli già esistente specificata con `-f`.
+
+### TrafficLight.py
+
+Definisce l'oggetto TrafficLight che implementa l'algoritmo per ridurre le emissioni.<br/>
+L'oggetto viene usato tramite il metodo `performStep()` che esegue la logica dell'algoritmo e applica gli enhancements specificati.
+
+### vehicles.py
+
+Definisce l'oggetto vehicleList e i metodi per accedere a un elemento e caricare una lista da file o caricarla su un file.<br/>
+Definisce la classe astratta Vehicle con tutte le proprietà di un veicolo e i metodi per misurare i parametri e per generare un veicoli casuale.<br/>
+Definisce gli oggetti dei diversi tipi di veicoli con i rispettivi attributi di classe.<br/>
+
+### DriverProfile.py
+
+Definisce l'oggetto DriverProfile che modella il comportamento di un autista.
+
+## Dati
+
+Per questo progetto sono stati usati i dati ACI relativi al parco veicolare in Italia nel 2022. <br/>
+Sono disponibili al link https://www.aci.it/laci/studi-e-ricerche/dati-e-statistiche/autoritratto/autoritratto-2022.html.
+
 ## Istruzioni
 
 **Aggiungere mappa:**
