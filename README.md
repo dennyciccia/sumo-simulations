@@ -1,6 +1,8 @@
 # Simulazioni SUMO
 Progetto per il tirocinio di laurea triennale.
 
+Software utilizzato per eseguire simulazioni in SUMO per testare l'efficacia di un algoritmo che, applicato ai semafori, contribuisce a ridurre le emissioni dei veicoli, migliorando anche altri parametri come il tempo medio di attesa al semaforo o il tempo medio di percorrenza.
+
 ## Funzionalità moduli
 
 ### runner.py
