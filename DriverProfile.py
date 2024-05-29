@@ -47,6 +47,7 @@ class DriverProfile:
                 break
         
         # rispetto del limite di velocità
-        limit = float(np.random.normal(loc=1, scale=0.2, size=1)[0])
+        limit = round(float(np.random.normal(loc=1, scale=0.2, size=1)[0]), 2)
+        if limit < 0: limit = 0.1
 
         return DriverProfile(distance, reactionTime, aggressivity, limit)
