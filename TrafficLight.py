@@ -1,12 +1,13 @@
 import traci
 
 J = 100
+K = 1
+Ke = 5
 
 class TrafficLight:
-    def __init__(self, tlID, enhancements, k):
+    def __init__(self, tlID, enhancements):
         self.__tlID = tlID
         self.__enhancements = enhancements  # lista dei miglioramenti dell'algoritmo
-        self.__K = k    # costante K nella formula del calcolo del costo del flusso
     
     @property
     def tlID(self):
@@ -15,10 +16,6 @@ class TrafficLight:
     @property
     def enhancements(self):
         return self.__enhancements
-
-    @property
-    def K(self):
-        return self.__K
     
     @property
     def movingFlow(self):
@@ -54,16 +51,16 @@ class TrafficLight:
         for edge in self.getHorizontalEdges():
             for vehicle in traci.edge.getLastStepVehicleIDs(edge):
                 if 1 not in self.enhancements:
-                    costH += J + 1 * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costH += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
                 else:
-                    costH += J + (self.K if self.movingFlow == 'HORIZONTAL' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costH += J + (Ke if self.movingFlow == 'HORIZONTAL' else K) * (traci.vehicle.getSpeed(vehicle) ** 2)
 
         for edge in self.getVerticalEdges():
             for vehicle in traci.edge.getLastStepVehicleIDs(edge):
                 if 1 not in self.enhancements:
-                    costV += J + 1 * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costV += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
                 else:
-                    costV += J + (self.K if self.movingFlow == 'VERTICAL' else 1) * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    costV += J + (Ke if self.movingFlow == 'VERTICAL' else K) * (traci.vehicle.getSpeed(vehicle) ** 2)
         
         return costH, costV
     

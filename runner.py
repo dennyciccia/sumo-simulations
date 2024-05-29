@@ -53,7 +53,6 @@ def main():
     parser.add_argument('-stl', '--smart-traffic-light', choices=["ON", "OFF"], dest="smart_traffic_light", required=True, metavar="ON | OFF", help="Accensione o meno del semaforo intelligente")
     parser.add_argument('-e', '--enhancements', choices=[1,2], nargs='*', type=int, dest="enhancements", required=False, metavar="[1] [2]", help="Numero del migliramento dell'alogritmo che si vuole usare (1, 2, 1 2)")
     parser.add_argument('-s', '--skip-route-check', action="store_true", dest="skip_route_check", required=False, help="Controllo delle routes")
-    parser.add_argument('-k', dest='K', required=True, type=int, metavar='N', help="Costante K nella formula del calcolo del costo con l'enhancement 1")
     arguments = parser.parse_args()
 
     if arguments.enhancements is not None and len(arguments.enhancements) > 2:
@@ -83,7 +82,7 @@ def main():
     smartTrafficLight = list()
     for tl in traci.trafficlight.getIDList():
         if arguments.smart_traffic_light == "ON":
-            smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else []), k=arguments.K))
+            smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
             traci.trafficlight.setProgram(tl, "1")
         else:
             traci.trafficlight.setProgram(tl, "0")
