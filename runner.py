@@ -81,7 +81,7 @@ def main():
     # inizializzazione semafori
     smartTrafficLight = list()
     for tl in traci.trafficlight.getIDList():
-        if arguments.smart_traffic_light == "ON":
+        if arguments.smart_traffic_light == "ON" and len(traci.trafficlight.getAllProgramLogics(tl)) > 1:
             smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
             traci.trafficlight.setProgram(tl, "1")
         else:
@@ -114,7 +114,7 @@ def main():
     if arguments.enhancements is not None and len(arguments.enhancements) > 0:
         logfile += "_e"
         for e in arguments.enhancements: logfile += str(e)
-    logfile += '_' + str(int(time.time())) + ".csv"
+    logfile += '_vp' + arguments.population_file[23:-5] + '_' + str(int(time.time())) + ".csv"
 
     with open(logfile, 'w') as fd:
         print("VehicleID;Distanza percorsa (m);Tempo di percorrenza (s);Tempo di attesa (s);Velocita media (m/s);Emissioni di CO2 (g);Emissioni di CO (g);Emissioni di HC (g);Emissioni di PMx (g);Emissioni di NOx (g);Consumo di carburante (g);Consumo elettrico (Wh);Emissione di rumore (dBA)", file=fd)
