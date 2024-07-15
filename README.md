@@ -27,6 +27,10 @@ Se viene passato il parametro `-r` vengono assegnate le routes alla popolazione 
 Definisce l'oggetto TrafficLight che implementa l'algoritmo per ridurre le emissioni.<br/>
 L'oggetto viene usato tramite il metodo `performStep()` che esegue la logica dell'algoritmo e applica gli enhancements specificati.
 
+### TrafficLightV2.py
+
+Versione estesa dell'algoritmo per adattarsi al caso di semafori generici.
+
 ### vehicles.py
 
 Definisce l'oggetto vehicleList e i metodi per accedere a un elemento e caricare una lista da file o caricarla su un file.<br/>

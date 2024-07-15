@@ -5,7 +5,7 @@ import time
 import random
 import traci
 from xml.dom import minidom
-from TrafficLight import TrafficLight
+from TrafficLightV2 import TrafficLightV2
 from vehicles import VehicleList
 
 
@@ -41,7 +41,8 @@ def generateVehicleTypesXML(vehicleList):
 
 def addVehiclesToSimulation(vehicleList):
     for v in vehicleList:
-        departLane = random.randint(0, 1)
+        #departLane = random.randint(0, 1)
+        departLane = 0
         traci.vehicle.add(vehID=v.vehicleID, routeID=v.routeID, typeID='vtype-'+v.vehicleID, depart=v.depart, departSpeed=v.initialSpeed, departLane=departLane)
 
 
@@ -82,7 +83,7 @@ def main():
     smartTrafficLight = list()
     for tl in traci.trafficlight.getIDList():
         if arguments.smart_traffic_light == "ON" and len(traci.trafficlight.getAllProgramLogics(tl)) > 1:
-            smartTrafficLight.append(TrafficLight(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
+            smartTrafficLight.append(TrafficLightV2(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
             traci.trafficlight.setProgram(tl, "1")
         else:
             traci.trafficlight.setProgram(tl, "0")
@@ -127,78 +128,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-"""
-# costanti degli induction loop delle varie mappe
-# 3way_crossing
-INDUCTION_LOOP_START_3way_crossing = ["ILE1dx","ILE1sx","ILE2dx","ILE2sx","ILE3dx","ILE3sx"]
-INDUCTION_LOOP_END_3way_crossing = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx"]
-# 4way_crossing
-INDUCTION_LOOP_START_4way_crossing = ["ILE1dx","ILE1sx","ILE2dx","ILE2sx","ILE3dx","ILE3sx","ILE4dx","ILE4sx"]
-INDUCTION_LOOP_END_4way_crossing = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx","IL-E4dx","IL-E4sx"]
-# 4way_crossing_160m
-INDUCTION_LOOP_START_4way_crossing_160m = ["ILE1dx","ILE1sx","ILE2dx","ILE2sx","ILE3dx","ILE3sx","ILE4dx","ILE4sx"]
-INDUCTION_LOOP_END_4way_crossing_160m = ["IL-E1dx","IL-E1sx","IL-E2dx","IL-E2sx","IL-E3dx","IL-E3sx","IL-E4dx","IL-E4sx"]
-
-        #exec("from induction_loop_constants import INDUCTION_LOOP_START_" + arguments.mapname + ", INDUCTION_LOOP_END_" + arguments.mapname)
-
-        totalEmissions = 0 # Kg
-        totalDistance = 0 # m
-        enteredVehicles = list()
-        step = 0
-        meanSpeed = 0 # m/s
-        totalWaitingTime = 0 # s
-
-        step += 1
-        # veicoli entrati nella simulazione
-        for indLoopID in eval("INDUCTION_LOOP_START_" + arguments.mapname):
-            vehicles = traci.inductionloop.getLastStepVehicleIDs(indLoopID)
-            for elem in vehicles:
-                if elem not in enteredVehicles:
-                    enteredVehicles.append(elem)
-
-        # step semafori
-        if arguments.smart_traffic_light == "ON":
-            for trafficLight in smartTrafficLight:
-                trafficLight.performStep()
-
-        # misure
-        for vehicleID in enteredVehicles[:]:
-            vehicleList.getVehicle(vehicleID).doMeasures(step)
-
-            # emissioni (misure intermedie)
-            #v = traci.vehicle.getSpeed(vehicleID)
-            #a = traci.vehicle.getAcceleration(vehicleID)
-            #s = traci.vehicle.getSlope(vehicleID) # sempre 0.0
-            #emission = vehicleList.getVehicle(vehicleID).getCO2emission(v, a, s)/36000 # Kg/100ms
-            #totalEmissions += emission if emission >= 0 else 0
-            emission = (traci.vehicle.getCO2Emission(vehicleID) * traci.simulation.getDeltaT()) / 1000000 # Kg/100ms
-            totalEmissions += emission
-
-            # distanza totale percorsa e tempo totale di attesa
-            for indLoopID in eval("INDUCTION_LOOP_END_" + arguments.mapname):
-                if vehicleID in traci.inductionloop.getLastStepVehicleIDs(indLoopID):
-                    vehicleList.getVehicle(vehicleID).doMeasures(step, final=True)
-
-                    # (misure intermedie)
-                    totalDistance += traci.vehicle.getDistance(vehicleID)
-                    totalWaitingTime += traci.vehicle.getAccumulatedWaitingTime(vehicleID)
-
-                    if vehicleID in enteredVehicles:
-                        enteredVehicles.remove(vehicleID)
-
-        # velocità media (degli edge nell'attuale step) (misure intermedie)
-        meanSpeedAtStep = 0
-        for edgeID in traci.edge.getIDList():
-            meanSpeedAtStep += traci.edge.getLastStepMeanSpeed(edgeID)
-        meanSpeedAtStep /= traci.edge.getIDCount()
-        # velocità media fino a ora
-        meanSpeed = (meanSpeed * (step-1) + meanSpeedAtStep) / step
-
-    # risultati misure intermedie
-    print(f"Distanza totale percorsa: {totalDistance / 1000} Km")
-    print(f"Velocità media: {meanSpeed * 3.6} Km/h")
-    print(f"Tempo totale di attesa: {totalWaitingTime} s")
-    print(f"Emissioni totali di CO2: {totalEmissions} Kg")
-    print(f"Emissione media di CO2: {(totalEmissions * 1000) / (totalDistance / 1000)} g/Km")
-    """
