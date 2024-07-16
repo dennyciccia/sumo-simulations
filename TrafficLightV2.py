@@ -223,28 +223,6 @@ class TrafficLightV2:
                 return
 
 
-if __name__ == "__main__":
-    from vehicles import VehicleList
-    from runner import generateVehicleTypesXML, addVehiclesToSimulation
-
-    vehicleList = VehicleList.load("data/vehicle_population1443.yaml")
-    generateVehicleTypesXML(vehicleList)
-    traci.start(["sumo-gui", "-c", "sumo_xml_files/manhattan5x5_100pc/manhattan5x5_100pc.sumocfg", "--step-length", "0.1"])
-    addVehiclesToSimulation(vehicleList)
-
-    smartTrafficLight = list()
-    for tl in traci.trafficlight.getIDList():
-        if len(traci.trafficlight.getAllProgramLogics(tl)) > 1:
-            smartTrafficLight.append(TrafficLightV2(tlID=tl, enhancements=[2]))
-            traci.trafficlight.setProgram(tl, "1")
-
-    while traci.simulation.getMinExpectedNumber():
-        traci.simulationStep()
-        for stl in smartTrafficLight:
-            stl.performStep()
-    traci.close()
-
-
 # si può fare che nell'init si definiscono tutte le proprietà del semaforo
 # IDEA (ma quale idea, non vedi che lei non ci sta):
 # si può organizzare un semaforo in modo che in un ciclo tutti i flussi devono andare prima che un flusso vada di nuovo.
