@@ -33,7 +33,7 @@ def remove_invalid_routes(routefile, valid_edges):
     tree.write(routefile)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Modulo per estrarre gli edge abbastanza lunghi da una mappa")
+    parser = argparse.ArgumentParser(description="Modulo per estrarre gli edge idonei allo spawn dei veicoli da una mappa")
     parser.add_argument('-n', '--net-file', dest="netfile", required=True, metavar="path/to/net_file.net.xml", help="File .net.xml")
     parser.add_argument('-l', '--min-length', type=int, dest="min_length", required=True, metavar="N", help="Lunghezza minima delle strade")
     parser.add_argument('-r', '--route-file', dest="routefile", required=True, metavar="path/to/route_file.rou.xml", help="File .rou.xml")
