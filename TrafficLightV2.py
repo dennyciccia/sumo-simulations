@@ -77,12 +77,13 @@ class TrafficLightV2:
             movingEdges = []
             phaseString = self.__program.phases[phaseIndex].state.lower()
 
-            # controlla che l'edge abbia il verde nella fase corrente,
-            # se si aggiungilo agli edge del flow corrente se non è già presente
+            # qua scorri tutti i controlled links (sono nella forma [(in, out, via)])
+            # poi metti nei movingEdges quelli che nella phaseString hanno la 'g' in corrispondenza
             for j, link in enumerate(traci.trafficlight.getControlledLinks(self.__tlID)):
-                edge = link[0][0][:-2]
-                if phaseString[j] == 'g' and edge not in movingEdges:
-                    movingEdges.append(edge)
+                if len(link) != 0:
+                    edge = link[0][0][:-2]
+                    if phaseString[j] == 'g' and edge not in movingEdges:
+                        movingEdges.append(edge)
 
             self.__flows.append(Flow(phaseIndex, movingEdges))
 
@@ -135,9 +136,10 @@ class TrafficLightV2:
         # controlla che l'edge abbia il verde nella fase corrente,
         # se si aggiungilo agli edge in movimento
         for i, link in enumerate(traci.trafficlight.getControlledLinks(self.tlID)):
-            edge = link[0][0][:-2]
-            if (phaseString[i] in ['g', 'y']) and edge not in movingEdges:
-                movingEdges.append(edge)
+            if len(link) != 0:
+                edge = link[0][0][:-2]
+                if (phaseString[i] in ['g', 'y']) and edge not in movingEdges:
+                    movingEdges.append(edge)
 
         # il moving flow è quello che ha tutti i movingEdges
         for flow in self.flows:
@@ -148,9 +150,12 @@ class TrafficLightV2:
     def switchTrafficLight(self):
         # switch del semaforo per cambiare il flusso che si muove
         notGoneFlows = [ f for f in self.flows if not f.gone ]
+        maxCost = -1
+        if len(notGoneFlows) != 0:
+            maxCost = max([ f.cost for f in notGoneFlows ]) if 3 in self.enhancements else -1
 
         # se i flow sono tutti andati almeno una volta allora ricomincia il ciclo
-        if len(notGoneFlows) == 0:
+        if len(notGoneFlows) == 0 or maxCost == 0:
             for f in self.flows: f.gone = False
             sortedFlows = sorted(self.flows, key=lambda x:x.cost, reverse=True)
         else:
@@ -167,28 +172,24 @@ class TrafficLightV2:
             flow.cost = 0
             for edge in flow.edges:
                 for vehicle in traci.edge.getLastStepVehicleIDs(edge):
-                    if 1 not in self.enhancements:
-                        flow.cost += J + K * (traci.vehicle.getSpeed(vehicle) ** 2)
-                    else:
-                        flow.cost += J + (Ke if self.movingFlow() == flow else K) * (traci.vehicle.getSpeed(vehicle) ** 2)
+                    flow.cost += J + (Ke if self.movingFlow() == flow else K) * (traci.vehicle.getSpeed(vehicle) ** 2)
 
     def tryToSkipRed(self):
-        print("tried to skip red ", self.tlID)
         # prova a saltare la fase di solo rosso se è sicuro farlo
         # nella mappa di bologna questo non viene mai eseguito
-        meanSpeed = vehicleNumber = [ 0 for _ in range(len(self.flows)) ]
+        vehicleNumber = [ 0 for _ in range(len(self.flows)) ]
+        meanSpeed = [ 0 for _ in range(len(self.flows)) ]
 
         # calcola velocità media e numero di veicoli su ogni edge di ogni flusso e controlla se si può saltare la fase di rosso
         skip = True
         for i, flow in enumerate(self.flows):
             for edge in flow.edges:
-                meanSpeed[i] += traci.edge.getLastStepMeanSpeed(edge)
                 vehicleNumber[i] += traci.edge.getLastStepVehicleNumber(edge)
+                meanSpeed[i] += 0 if vehicleNumber[i] == 0 else traci.edge.getLastStepMeanSpeed(edge)
             meanSpeed[i] /= len(flow.edges)
 
-            if flow == self.movingFlow(): continue
-
-            if vehicleNumber[i] != 0 and meanSpeed[i] >= 1.0:
+            # per il flusso in movimento (quello che ha il giallo) guarda se c'è qualcuno sulla strada che non è già fermo
+            if flow == self.movingFlow() and vehicleNumber[i] != 0 and meanSpeed[i] >= 1.0:
                 skip = False
 
         # se i veicoli sugli edge degli altri flussi sono fermi o non ci sono vai alla fase verde successiva
@@ -205,7 +206,7 @@ class TrafficLightV2:
         # se siamo alla fine della fase attuale
         if traci.trafficlight.getSpentDuration(self.tlID) == traci.trafficlight.getPhaseDuration(self.tlID) - 1:
             # se siamo in una fase prima del rosso prova a saltare la fase di rosso
-            if traci.trafficlight.getPhase(self.tlID) in self.preRedPhases and 2 in self.enhancements: # per qualche motivo non salta mai il rosso in manhattan
+            if traci.trafficlight.getPhase(self.tlID) in self.preRedPhases:
                 self.tryToSkipRed()
             # se siamo in una fase prima del verde passa alla prossima fase indicata
             elif traci.trafficlight.getPhase(self.tlID) in self.preMainPhases:
@@ -220,11 +221,6 @@ class TrafficLightV2:
                 if self.movingFlow().cost < max([ f.cost for f in self.flows ]):
                     self.switchTrafficLight()
                 return
-
-        if 2 in self.enhancements:
-            # se siamo alla fine della fase giallo prova a saltare la fase di solo rosso se è sicuro farlo
-            if traci.trafficlight.getPhase(self.tlID) in self.preRedPhases and traci.trafficlight.getSpentDuration(self.tlID) == traci.trafficlight.getPhaseDuration(self.tlID) - 1:
-                self.tryToSkipRed()
 
 
 if __name__ == "__main__":

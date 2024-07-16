@@ -78,6 +78,7 @@ Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON 
 - impostare la mappa
 - impostare la distribuzione (numero di veicoli che girano)
 - generare la popolazione
+- definire le routes per la popolazione
 
 ### Regole per costruire una mappa
 

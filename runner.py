@@ -52,12 +52,12 @@ def main():
     parser.add_argument('-p', '--population-file', dest="population_file", required=True, metavar="path/to/vehicle_population_file", help="File della popolazione dei veicoli")
     parser.add_argument('-n', '--map-name', dest="mapname", required=True, metavar="NAME", help="Nome dello scenario")
     parser.add_argument('-stl', '--smart-traffic-light', choices=["ON", "OFF"], dest="smart_traffic_light", required=True, metavar="ON | OFF", help="Accensione o meno del semaforo intelligente")
-    parser.add_argument('-e', '--enhancements', choices=[1,2], nargs='*', type=int, dest="enhancements", required=False, metavar="[1] [2]", help="Numero del migliramento dell'alogritmo che si vuole usare (1, 2, 1 2)")
+    parser.add_argument('-e', '--enhancements', choices=[1,2,3], nargs='*', type=int, dest="enhancements", required=False, metavar="[1] [2] [3]", help="Numero del migliramento dell'alogritmo che si vuole usare (1, 2, 3)")
     parser.add_argument('-s', '--skip-route-check', action="store_true", dest="skip_route_check", required=False, help="Controllo delle routes")
     arguments = parser.parse_args()
 
-    if arguments.enhancements is not None and len(arguments.enhancements) > 2:
-        print("Massimo due argomenti per -e / --enhancements")
+    if arguments.enhancements is not None and len(arguments.enhancements) > 3:
+        print("Massimo tre argomenti per -e / --enhancements")
         exit()
 
     # inizializzazione veicoli
