@@ -57,8 +57,8 @@ Sono disponibili al link https://www.aci.it/laci/studi-e-ricerche/dati-e-statist
 2. eseguire 'vehicle_generator.py' passando come parametro il nome del file della popolazione
 
 **Generare popolazione veicoli:**
-1. eseguire ```vehicle_generator.py -f "vehicle_population_filename"``` per generare la popolazione
-2. eseguire ```vehicle_generator.py -f "vehicle_population_filename" -r FIRST LAST``` per assegnare le route ai veicoli in base alla mappa corrente
+1. eseguire ```vehicle_generator.py -f "vehicle_population_filename.yaml" -n N``` per generare la popolazione di N veicoli
+2. eseguire ```vehicle_generator.py -f "vehicle_population_filename.yaml" -r FIRST LAST``` per assegnare le route ai veicoli in base alla mappa corrente
 
 **Generare routes per una certa mappa**
 1. usare ```python $env:SUMO_HOME/tools/randomTrips.py -n <file.net.xml> -e <numero-routes> -r <file.rou.xml>``` per generare il file delle routes (.rou.xml)

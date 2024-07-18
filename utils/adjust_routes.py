@@ -1,5 +1,5 @@
 # script che serve per correggere le routes della mappa di bologna,
-# trova le routes su cui i veicoli possono spawnare e rimuove dal route file quelle appropriate per lo scopo
+# trova le routes su cui i veicoli possono spawnare e rimuove dal route file quelle non idonee
 
 import argparse
 import xml.etree.ElementTree as ET
