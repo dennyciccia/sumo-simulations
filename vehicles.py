@@ -380,7 +380,7 @@ class Vehicle(ABC):
                 match fuelType:
                     # in questo caso è GNL
                     case "lpg/petrol":
-                        classes = ["HBEFA4/TT_AT_LNG_Euro-IV", "HBEFA4/TT_AT_LNG_Euro-V", "TT_AT_LNG_Euro-VI_(CI)"]
+                        classes = ["HBEFA4/TT_AT_LNG_Euro-IV", "HBEFA4/TT_AT_LNG_Euro-V", "HBEFA4/TT_AT_LNG_Euro-VI_(CI)"]
                         emissionClass = random.choices(classes, weights=(5.00, 35.00, 17.50))[0]
                     case "electric":
                         emissionClass = "HBEFA4/TT_AT_BEV"
@@ -388,7 +388,7 @@ class Vehicle(ABC):
                         classes = ["HBEFA4/TT_AT_gt34-40t_80ties", "HBEFA4/TT_AT_gt34-40t_Euro-I", "HBEFA4/TT_AT_gt34-40t_Euro-II", "HBEFA4/TT_AT_gt34-40t_Euro-III", "HBEFA4/TT_AT_gt34-40t_Euro-IV_SCR", "HBEFA4/TT_AT_gt34-40t_Euro-V_SCR", "HBEFA4/TT_AT_gt34-40t_Euro-VI_A-C"]
                         emissionClass = random.choices(classes, weights=(36.98, 5.84, 12.31, 16.32, 3.73, 9.58, 14.97))[0]
                     case "cng":
-                        classes = ["HBEFA4/TT_AT_CNG_Euro-IV", "HBEFA4/TT_AT_CNG_Euro-V", "TT_AT_CNG_Euro-VI"]
+                        classes = ["HBEFA4/TT_AT_CNG_Euro-IV", "HBEFA4/TT_AT_CNG_Euro-V", "HBEFA4/TT_AT_CNG_Euro-VI"]
                         emissionClass = random.choices(classes, weights=(0.00, 0.98, 98.97))[0]
 
             case "MotorCycle":
