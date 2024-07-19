@@ -64,7 +64,7 @@ def main():
     vehicleList = VehicleList.load(arguments.population_file)
 
     # controllo routes
-    if not arguments.skip_route_check and "manhattan" not in arguments.mapname and "bologna" not in arguments.mapname:
+    if not arguments.skip_route_check and "4way_crossing" in arguments.mapname or "3way_crossing" in arguments.mapname:
         route_set = set()
         for v in vehicleList:
             route_set.add(v.routeID)
