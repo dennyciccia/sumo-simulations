@@ -62,7 +62,7 @@ Sono disponibili al link https://www.aci.it/laci/studi-e-ricerche/dati-e-statist
 
 **Generare routes per una certa mappa**
 1. usare ```python $env:SUMO_HOME/tools/randomTrips.py -n <file.net.xml> -e <numero-routes> -r <file.rou.xml>``` per generare il file delle routes (.rou.xml)
-2. rimuovere dal file generato tutti i tag che non sono <route/>
+2. rimuovere dal file generato tutti i tag che non sono `<route/>`
 3. usare ```python utils/routes_editor.py -f <file.rou.xml>``` per assegnare gli ID alle routes
 
 ### Eseguire una simulazione:
