@@ -71,7 +71,8 @@ Eseguire ```runner.py -p "path/to/vehicle_population_file" -n MAP_NAME -stl (ON 
    - ```-p``` indica il file contenente la popolazione di veicoli
    - ```-n``` indica il nome della mappa attuale
    - ```-stl``` indica lo stato del semaforo intelligente (ON/OFF)
-   - ```-e``` indica quali enhancements usare per il semaforo intelligente (nessuno, 1, 2, 1 2)
+   - ```-e``` indica quali enhancements usare per il semaforo intelligente (nessuno, 1, 2, 1 2, 3)
+   - ```-r``` indica quante volte eseguire lo stesso esperimento per poi aggregare i dati (default 1)
    - ```-s``` salta il controllo delle routes (il controllo serve per evitare di dimenticarsi di assegnarle), non consigliato
 
 **Prima di eseguire una simulazione:**

@@ -46,6 +46,50 @@ def addVehiclesToSimulation(vehicleList):
         traci.vehicle.add(vehID=v.vehicleID, routeID=v.routeID, typeID='vtype-'+v.vehicleID, depart=v.depart, departSpeed=v.initialSpeed, departLane=departLane)
 
 
+def writeData(arguments, datiSimulazioni):
+    # creazione della cartella di log per la mappa attuale se non esiste
+    if not os.path.exists("logs/" + arguments.mapname):
+        os.mkdir("logs/" + arguments.mapname)
+
+    # nome del file di log
+    logfile = "logs/" + arguments.mapname + "/log_stl" + arguments.smart_traffic_light
+    if arguments.enhancements is not None and len(arguments.enhancements) > 0:
+        logfile += "_e"
+        for e in arguments.enhancements: logfile += str(e)
+    logfile += '_vp' + arguments.population_file[23:-5] + '_' + str(int(time.time())) + ".csv"
+
+    #aggregazione dei dati
+    somma = dict()
+    conteggio = dict()
+    for simData in datiSimulazioni:
+        for vehicleData in simData:
+            vehicleID = vehicleData.pop("vehicleID")
+            if vehicleID not in somma:
+                somma[vehicleID] = dict()
+                conteggio[vehicleID] = dict()
+
+            for key, value in vehicleData.items():
+                if key in somma[vehicleID]:
+                    somma[vehicleID][key] += value
+                    conteggio[vehicleID][key] += 1
+                else:
+                    somma[vehicleID][key] = value
+                    conteggio[vehicleID][key] = 1
+    
+    averageData = dict()
+    for vehicleID in somma:
+        averageData[vehicleID] = dict()
+        for key in somma[vehicleID]:
+            averageData[vehicleID][key] = somma[vehicleID][key] / conteggio[vehicleID][key]
+
+
+    # scrittura sul file
+    with open(logfile, 'w') as fd:
+        print("VehicleID;Distanza percorsa (m);Tempo di percorrenza (s);Tempo di attesa (s);Velocita media (m/s);Emissioni di CO2 (g);Emissioni di CO (g);Emissioni di HC (g);Emissioni di PMx (g);Emissioni di NOx (g);Consumo di carburante (g);Consumo elettrico (Wh);Emissione di rumore (dBA)", file=fd)
+        for vehicleID, dati in averageData.items():
+            print(f'{vehicleID};{dati["totalDistance"]};{dati["totalTravelTime"]};{dati["totalWaitingTime"]};{dati["meanSpeed"]};{dati["totalCO2Emissions"]};{dati["totalCOEmissions"]};{dati["totalHCEmissions"]};{dati["totalPMxEmissions"]};{dati["totalNOxEmissions"]};{dati["totalFuelConsumption"]};{dati["totalElectricityConsumption"]};{dati["totalNoiseEmission"]}', file=fd)
+
+
 def main():
     # parsing argomenti
     parser = argparse.ArgumentParser(description="Modulo per eseguire le simulazioni")
@@ -54,76 +98,79 @@ def main():
     parser.add_argument('-stl', '--smart-traffic-light', choices=["ON", "OFF"], dest="smart_traffic_light", required=True, metavar="ON | OFF", help="Accensione o meno del semaforo intelligente")
     parser.add_argument('-e', '--enhancements', choices=[1,2,3], nargs='*', type=int, dest="enhancements", required=False, metavar="[1] [2] [3]", help="Numero del migliramento dell'alogritmo che si vuole usare (1, 2, 3)")
     parser.add_argument('-s', '--skip-route-check', action="store_true", dest="skip_route_check", required=False, help="Controllo delle routes")
+    parser.add_argument('-r', '--repeat', type=int, default=1, dest="repeat", required=False, help="Numero di esperimenti di cui aggregare i dati")
     arguments = parser.parse_args()
 
     if arguments.enhancements is not None and len(arguments.enhancements) > 3:
         print("Massimo tre argomenti per -e / --enhancements")
         exit()
+    
+    datiSimulazioni = []
+    #inizio ciclo simulazioni
+    for i in range(arguments.repeat):
+        print(f"Esecuzione simulazione {i+1}...")
 
-    # inizializzazione veicoli
-    vehicleList = VehicleList.load(arguments.population_file)
+        # inizializzazione veicoli
+        vehicleList = VehicleList.load(arguments.population_file)
 
-    # controllo routes
-    if not arguments.skip_route_check and "4way_crossing" in arguments.mapname or "3way_crossing" in arguments.mapname:
-        route_set = set()
+        # controllo routes
+        if not arguments.skip_route_check and "4way_crossing" in arguments.mapname or "3way_crossing" in arguments.mapname:
+            route_set = set()
+            for v in vehicleList:
+                route_set.add(v.routeID)
+            with open("sumo_xml_files/" + arguments.mapname + "/" + arguments.mapname + ".rou.xml", 'r') as fd:
+                lines = len(fd.readlines())
+            if lines-3 != len(route_set): print(f"\033[91m {'!!! Routes non corrette !!!'}\033[00m")
+
+        # generazione del file dei vehicletypes
+        generateVehicleTypesXML(vehicleList)
+
+        # avvio SUMO
+        startProgram(arguments.mapname)
+        addVehiclesToSimulation(vehicleList)
+
+        # inizializzazione semafori
+        smartTrafficLight = list()
+        for tl in traci.trafficlight.getIDList():
+            if arguments.smart_traffic_light == "ON" and len(traci.trafficlight.getAllProgramLogics(tl)) > 1:
+                smartTrafficLight.append(TrafficLightV2(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
+                traci.trafficlight.setProgram(tl, "1")
+            else:
+                traci.trafficlight.setProgram(tl, "0")
+
+        activeVehicles = set()
+
+        # avvio simulazione
+        while traci.simulation.getMinExpectedNumber() > 0:
+            traci.simulationStep()
+
+            # aggiornamento set
+            activeVehicles.update(traci.simulation.getDepartedIDList())
+            activeVehicles.difference_update(traci.simulation.getArrivedIDList())
+
+            # step semafori
+            if arguments.smart_traffic_light == "ON":
+                for trafficLight in smartTrafficLight:
+                    trafficLight.performStep()
+
+            # misure
+            for vehicle in activeVehicles:
+                vehicleList.getVehicle(vehicle).doMeasures()
+        
+        # fine simulazione
+        traci.close()
+        sys.stdout.flush()
+
+        # salvataggio dati della simulazione
+        print(f"Salvataggio dati simulazione {i+1}...")
+        datiVeicoliSimulazione = []
         for v in vehicleList:
-            route_set.add(v.routeID)
-        with open("sumo_xml_files/" + arguments.mapname + "/" + arguments.mapname + ".rou.xml", 'r') as fd:
-            lines = len(fd.readlines())
-        if lines-3 != len(route_set): print(f"\033[91m {'!!! Routes non corrette !!!'}\033[00m")
-
-    # generazione del file dei vehicletypes
-    generateVehicleTypesXML(vehicleList)
-
-    # avvio SUMO
-    startProgram(arguments.mapname)
-    addVehiclesToSimulation(vehicleList)
-
-    # inizializzazione semafori
-    smartTrafficLight = list()
-    for tl in traci.trafficlight.getIDList():
-        if arguments.smart_traffic_light == "ON" and len(traci.trafficlight.getAllProgramLogics(tl)) > 1:
-            smartTrafficLight.append(TrafficLightV2(tlID=tl, enhancements=(arguments.enhancements if arguments.enhancements is not None else [])))
-            traci.trafficlight.setProgram(tl, "1")
-        else:
-            traci.trafficlight.setProgram(tl, "0")
-
-    activeVehicles = set()
-
-    # avvio simulazione
-    while traci.simulation.getMinExpectedNumber() > 0:
-        traci.simulationStep()
-
-        #aggiornamento set
-        activeVehicles.update(traci.simulation.getDepartedIDList())
-        activeVehicles.difference_update(traci.simulation.getArrivedIDList())
-
-        # step semafori
-        if arguments.smart_traffic_light == "ON":
-            for trafficLight in smartTrafficLight:
-                trafficLight.performStep()
-
-        # misure
-        for vehicle in activeVehicles:
-            vehicleList.getVehicle(vehicle).doMeasures()
-
+            datiDict = {"vehicleID": v.vehicleID, "totalDistance": v.totalDistance, "totalTravelTime": v.totalTravelTime, "totalWaitingTime": v.totalWaitingTime, "meanSpeed": v.meanSpeed, "totalCO2Emissions": v.totalCO2Emissions, "totalCOEmissions": v.totalCOEmissions, "totalHCEmissions": v.totalHCEmissions, "totalPMxEmissions": v.totalPMxEmissions, "totalNOxEmissions": v.totalNOxEmissions, "totalFuelConsumption": v.totalFuelConsumption, "totalElectricityConsumption": v.totalElectricityConsumption, "totalNoiseEmission": v.totalNoiseEmission}
+            datiVeicoliSimulazione.append(datiDict)
+        datiSimulazioni.append(datiVeicoliSimulazione)
+    
     # scrittura dati dei veicoli
-    if not os.path.exists("logs/" + arguments.mapname):
-        os.mkdir("logs/" + arguments.mapname)
-
-    logfile = "logs/" + arguments.mapname + "/log_stl" + arguments.smart_traffic_light
-    if arguments.enhancements is not None and len(arguments.enhancements) > 0:
-        logfile += "_e"
-        for e in arguments.enhancements: logfile += str(e)
-    logfile += '_vp' + arguments.population_file[23:-5] + '_' + str(int(time.time())) + ".csv"
-
-    with open(logfile, 'w') as fd:
-        print("VehicleID;Distanza percorsa (m);Tempo di percorrenza (s);Tempo di attesa (s);Velocita media (m/s);Emissioni di CO2 (g);Emissioni di CO (g);Emissioni di HC (g);Emissioni di PMx (g);Emissioni di NOx (g);Consumo di carburante (g);Consumo elettrico (Wh);Emissione di rumore (dBA)", file=fd)
-        for v in vehicleList:
-            print(f"{v.vehicleID};{v.totalDistance};{v.totalTravelTime};{v.totalWaitingTime};{v.meanSpeed};{v.totalCO2Emissions};{v.totalCOEmissions};{v.totalHCEmissions};{v.totalPMxEmissions};{v.totalNOxEmissions};{v.totalFuelConsumption};{v.totalElectricityConsumption};{v.totalNoiseEmission}", file=fd)
-
-    traci.close()
-    sys.stdout.flush()
+    writeData(arguments, datiSimulazioni)
 
 
 if __name__ == "__main__":
