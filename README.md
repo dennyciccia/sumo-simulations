@@ -1,7 +1,10 @@
 # Simulazioni SUMO
 Progetto per il tirocinio di laurea triennale.
 
-Software utilizzato per eseguire simulazioni in SUMO per testare l'efficacia di un algoritmo che, applicato ai semafori, contribuisce a ridurre le emissioni dei veicoli, migliorando anche altri parametri come il tempo medio di attesa al semaforo o il tempo medio di percorrenza.
+Software utilizzato per eseguire simulazioni in SUMO per testare l'efficacia di un algoritmo che, applicato ai semafori, contribuisce a ridurre le emissioni dei veicoli, migliorando anche altri parametri come il tempo medio di attesa al semaforo e il tempo medio di percorrenza.
+
+Articolo scientifico pubblicato:  
+"G. Cabri, D. Ciccia, M. Montangero and F. Muzzini, "Integrating Smart Traffic Lights for Enhanced Urban Air Quality in Smart Cities," 2024 IEEE/ACM Symposium on Edge Computing (SEC), Rome, Italy, 2024, pp. 358-363, doi: 10.1109/SEC62691.2024.00037. https://ieeexplore.ieee.org/document/10818020"
 
 ## Funzionalità moduli
 
